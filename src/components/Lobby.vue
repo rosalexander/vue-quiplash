@@ -72,8 +72,10 @@
             }
 
             this.socket.on('get_username', function(data) {
-                this.username = data
-                this.hasName = true
+                if (data.user_id == this.user_id) {
+                    this.username = data.username
+                    this.hasName = true
+                }
             }.bind(this))
         },
 

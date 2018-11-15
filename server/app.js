@@ -59,7 +59,7 @@ io.on('connection', function(socket) {
             
             if (result != null) {
                 console.log("Existing user " + result)
-                io.emit('get_username', result)
+                io.emit('get_username', {user_id: user_id, username: result})
             }
         })
     });
