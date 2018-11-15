@@ -47,4 +47,20 @@ io.on('connection', function(socket) {
         redis.lpush('messages', JSON.stringify(data));
 
     });
+
+    socket.on('new_client_connection', function(data) {
+        console.log('New connection: ' + data.user_id);
+        redis.hset('users', data.user_id, data.username);
+    });
+
+    socket.on('get_existing_client_connection', function(user_id) {
+        console.log("Retrieving existing client connection for " + user_id)
+        redis.hget('users', user_id).then(function(result) {
+            
+            if (result != null) {
+                console.log("Existing user " + result)
+                io.emit('get_username', result)
+            }
+        })
+    });
 });
