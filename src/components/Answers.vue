@@ -8,10 +8,12 @@
             nudist would have"
         </div>
         <hr>
+        <div class="cardRow">
         <button class="card"> Choice 1
         </button>
-        <button class="card2"> Choice 2
+        <button class="card"> Choice 2
         </button>
+        </div>
         <div class="typewriter">
             <div class="player1">
                 <h1>Player 1 is ready...</h1>
