@@ -51,7 +51,8 @@
 
 <script>
 
-    import io from 'socket.io-client';
+    import io from 'socket.io-client'
+    import router from '@/router'
 
     export default {
         name: 'Lobby',
@@ -86,6 +87,7 @@
 
             startGame() {
                 console.log("Start game")
+                router.push({name: 'Game', prams: {id: this.pin}})
             },
 
             rename() {

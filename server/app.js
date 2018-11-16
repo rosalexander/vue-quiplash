@@ -23,11 +23,6 @@ server.listen(port, () => console.log('Server running on port: ' + port));
 io.on('connection', function(socket) {
     console.log("Socket ID: " + socket.id)
 
-    var member = {
-        socket: socket.id,
-    };
-
-    redis.hset('members', socket.id, JSON.stringify(member));
 
     socket.on('join', function(data){
         console.log(data._id + ' has joined');
