@@ -2,10 +2,15 @@
     <div>
         <div class="header">
             LOBBY
+            <br>
+            <button class="btnPin">PIN: {{pin}} </button>
         </div>
+        
         <div class="waitingMessage">
 
             Members
+
+            <br>
 
             <ul v-for="member in members">
                     {{ member }}
@@ -21,16 +26,22 @@
             <div v-if="!hasName">
                 <form @submit.prevent="handleEnter">
                     <input type="text" id="roundInput" v-model="username" required min="4"><br>
-                    <button type="submit" id="lobbyCreate">Enter Name</button>
+                    <button type="submit" id="lobbyCreate">ENTER NAME</button>
                 </form>
+                <br>
             </div>
 
             <!-- <div v-else>
                 <h1>{{username}}</h1>
                 <h1>{{user_id}}</h1>
             </div> -->
+            <div v-else>
+                <form @submit.prevent="rename">
+                    <input type="submit" value="RENAME">
+                </form>
+                <br>
+            </div>
 
-            <button class="btnPin">PIN {{pin}} </button>
             <form @submit.prevent="startGame">
                 <input type="submit" value="START GAME">
             </form>
@@ -60,16 +71,26 @@
 
         methods: {
             handleEnter() {
-                this.hasName = true
-                this.socket.emit('new_client_connection', {
-                    user_id: this.user_id,
-                    username: this.username
-                })
-                this.addUser()
+
+                if (!this.members.includes(this.username)) {
+                    this.hasName = true
+                    this.socket.emit('new_client_connection', {
+                        user_id: this.user_id,
+                        username: this.username
+                    })
+                    this.addUser()
+                } else {
+                    alert("Username already taken")
+                }
             },
 
             startGame() {
                 console.log("Start game")
+            },
+
+            rename() {
+                this.hasName = false;
+                this.removeUser();
             },
 
             addUser() {
