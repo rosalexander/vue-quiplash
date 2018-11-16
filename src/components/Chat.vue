@@ -91,5 +91,8 @@ export default {
 </script>
 
 <style>
+ul {
+  font-size: 10px;
+}
 
 </style>

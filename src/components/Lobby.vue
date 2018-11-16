@@ -1,11 +1,20 @@
 <template>
     <div>
         <div class="header">
-            LOBBY Test
+            LOBBY
         </div>
         <div class="waitingMessage">
+
+            Members
+
+            <ul v-for="member in members">
+                    {{ member }}
+            </ul>
+
             Waiting for more players to join...
         </div>
+
+        
 
         <div class=roundInput>
             
@@ -16,12 +25,12 @@
                 </form>
             </div>
 
-            <div v-else>
+            <!-- <div v-else>
                 <h1>{{username}}</h1>
                 <h1>{{user_id}}</h1>
-            </div>
+            </div> -->
 
-            <button class="btnPin">PIN {{$route.params.id}} </button>
+            <button class="btnPin">PIN {{pin}} </button>
             <form action="ready.html">
                 <input type="submit" value="START GAME">
             </form>
@@ -42,9 +51,10 @@
                 hasName: false,
                 message: '',
                 messages: [],
-                members: {},
+                members: [],
                 socket : io('http://' + window.location.hostname + ':3000'),
-                user_id : localStorage.getItem('uUID')
+                user_id : localStorage.getItem('uUID'),
+                pin: this.$route.params.id
             }
         },
 
@@ -55,11 +65,23 @@
                     user_id: this.user_id,
                     username: this.username
                 })
+                this.addUser()
             },
 
-            existingUser(username) {
-                this.username = username
-                this.hasName = true
+            addUser() {
+                console.log("Adding user to lobby")
+                this.socket.emit('add_user_to_lobby', {
+                    pin: this.pin,
+                    username: this.username
+                })
+            },
+
+            removeUser() {
+                console.log("Removing user from lobby")
+                this.socket.emit('remove_user_from_lobby', {
+                    pin: this.pin,
+                    username: this.username
+                })
             }
         },
 
@@ -75,24 +97,38 @@
                 if (data.user_id == this.user_id) {
                     this.username = data.username
                     this.hasName = true
+                    this.addUser()
                 }
+            }.bind(this))
+
+            
+
+
+            
+        },
+
+        mounted() {
+
+            this.socket.emit('get_users_in_lobby', this.$route.params.id)
+
+            this.socket.on('list_users_in_lobby', function(data) {
+              console.log(data)
+              this.members = data
             }.bind(this))
         },
 
-        // mounted() {
-        //     this.socket.on('get_username', function(data) {
-        //         this.username = data
-        //         this.hasName = true
-        //     }.bind(this))
-        // },
-
         beforeDestroy() {
-            console.log("beforeDestroy")
+            this.removeUser()
+
         }
         
     }
 </script>
 
 <style>
-
+    ul {
+        margin-right:2pc;
+        text-align: center;
+        list-style: inside;
+    }
 </style>

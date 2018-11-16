@@ -35,8 +35,7 @@ export default {
         font-family: "Krungthep";
         font-size: 40px;
         text-align: center;
-        padding: 10px;
-        margin-top: 20%;
+        padding: 1px;
     }
 
     .roundMessage {

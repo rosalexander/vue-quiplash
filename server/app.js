@@ -58,9 +58,25 @@ io.on('connection', function(socket) {
         redis.hget('users', user_id).then(function(result) {
             
             if (result != null) {
-                console.log("Existing user " + result)
-                io.emit('get_username', {user_id: user_id, username: result})
+                console.log("Existing user " + result);
+                io.emit('get_username', {user_id: user_id, username: result});
             }
-        })
+        });
     });
+
+    socket.on('add_user_to_lobby', function(data) {
+        console.log("Adding user " + data.username + " to lobby " + data.pin);
+        redis.sadd(data.pin, data.username);
+    });
+
+    socket.on('remove_user_from_lobby', function(data) {
+        console.log("Removing user " + data.username + " from lobby " + data.pin);
+        redis.srem(data.pin, data.username);
+    });
+
+    socket.on('get_users_in_lobby', function(pin) {
+        redis.smembers(pin).then(function(result) {
+            io.emit('list_users_in_lobby', result);
+        });
+    })
 });
