@@ -31,7 +31,7 @@
             </div> -->
 
             <button class="btnPin">PIN {{pin}} </button>
-            <form action="ready.html">
+            <form @submit.prevent="startGame">
                 <input type="submit" value="START GAME">
             </form>
         </div> 
@@ -68,6 +68,10 @@
                 this.addUser()
             },
 
+            startGame() {
+                console.log("Start game")
+            },
+
             addUser() {
                 console.log("Adding user to lobby")
                 this.socket.emit('add_user_to_lobby', {
@@ -101,24 +105,23 @@
                 }
             }.bind(this))
 
-            
-
-
+            this.socket.emit('get_users_in_lobby', this.$route.params.id)
             
         },
 
         mounted() {
 
-            this.socket.emit('get_users_in_lobby', this.$route.params.id)
-
             this.socket.on('list_users_in_lobby', function(data) {
-              console.log(data)
-              this.members = data
+              if (this.pin == data.pin) {
+                this.members = data.members
+              }
+              
             }.bind(this))
         },
 
         beforeDestroy() {
             this.removeUser()
+            this.socket.disconnect(true)
 
         }
         

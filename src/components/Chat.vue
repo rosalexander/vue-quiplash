@@ -86,13 +86,14 @@ export default {
         this.socket.on('member_history', function(members) {
             pass;
         }.bind(this));
+    },
+
+    beforeDestroy() {
+        this.socket.disconnect(true)
     }
 }
 </script>
 
 <style>
-ul {
-  font-size: 10px;
-}
 
 </style>

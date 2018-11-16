@@ -5,6 +5,7 @@ import Chat from '@/components/Chat'
 import Home from '@/components/Home'
 import Lobby from '@/components/Lobby'
 import Ready from '@/components/Ready'
+import Game from '@/components/Game'
 
 Vue.use(Router)
 
@@ -34,6 +35,11 @@ const routes = [
     path: '/ready',
     name: 'Ready',
     component: Ready
+  },
+  {
+    path: '/game',
+    name: 'Game',
+    component: Game
   }
 ]
 

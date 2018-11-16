@@ -21,7 +21,7 @@ app.get('/', function (req, res) {
 server.listen(port, () => console.log('Server running on port: ' + port));
 
 io.on('connection', function(socket) {
-    console.log(socket.id)
+    console.log("Socket ID: " + socket.id)
 
     var member = {
         socket: socket.id,
@@ -66,17 +66,26 @@ io.on('connection', function(socket) {
 
     socket.on('add_user_to_lobby', function(data) {
         console.log("Adding user " + data.username + " to lobby " + data.pin);
-        redis.sadd(data.pin, data.username);
+        redis.sadd(data.pin, data.username).then(() => {
+            redis.smembers(data.pin).then(function(result) {
+                io.emit('list_users_in_lobby', {pin: data.pin, members: result});
+            }.bind(data.pin));
+        });
     });
 
     socket.on('remove_user_from_lobby', function(data) {
         console.log("Removing user " + data.username + " from lobby " + data.pin);
-        redis.srem(data.pin, data.username);
+        redis.srem(data.pin, data.username).then(() => {
+            redis.smembers(data.pin).then(function(result) {
+                io.emit('list_users_in_lobby', {pin: data.pin, members: result});
+            }.bind(data.pin));
+        });
+        
     });
 
     socket.on('get_users_in_lobby', function(pin) {
         redis.smembers(pin).then(function(result) {
-            io.emit('list_users_in_lobby', result);
-        });
+            io.emit('list_users_in_lobby', {pin: pin, members: result});
+        }.bind(pin));
     })
 });
