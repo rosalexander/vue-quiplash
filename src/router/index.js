@@ -6,6 +6,8 @@ import Home from '@/components/Home'
 import Lobby from '@/components/Lobby'
 import Ready from '@/components/Ready'
 import Game from '@/components/Game'
+import Answers from '@/components/Answers'
+import Results from '@/components/Results'
 
 Vue.use(Router)
 
@@ -36,10 +38,23 @@ const routes = [
     name: 'Ready',
     component: Ready
   },
+
   {
     path: '/game/:id',
     name: 'Game',
     component: Game
+  },
+
+  {
+    path: '/answers',
+    name: 'Answers',
+    component: Answers
+  },
+
+  {
+    path: '/results',
+    name: 'Results',
+    component: Results
   }
 ]
 

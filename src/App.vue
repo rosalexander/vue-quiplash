@@ -76,6 +76,14 @@ export default {
         margin-top: 4%;
     }
 
+    .headerRound {
+    font-family: "Krungthep";
+    font-size: 63px;
+    text-align: center;
+    padding: 25px;
+    color:white;
+}
+
     #lobbyCreate:hover {
         background-color: #77df7c;
         color: white;
@@ -295,4 +303,229 @@ export default {
         text-transform: uppercase;
         display: inline-block;
     }
+
+    .card {
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    width: 20%;
+    margin-left: 25%;
+    margin-right: 8%;
+    margin-top: 2%;
+    font-size: 35px;
+    text-align: center;
+    font-family: "Krungthep";
+    background-color: rgb(255, 255, 255);
+    color: black;
+    padding: 3%;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    background-color: #77df7c;
+    color: white;
+}
+
+.card:focus {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    background-color: #77df7c;
+    color: white;
+}
+
+.card2 {
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    width: 20%;
+    margin-right: 25%;
+    font-size: 35px;
+    text-align: center;
+    font-family: "Krungthep";
+    background-color: rgb(255, 255, 255);
+    color: black;
+    padding: 3%;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.card2:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    background-color: #77df7c;
+    color: white;
+}
+
+.card2:focus {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    background-color: #77df7c;
+    color: white;
+}
+
+.player1 {
+    color: #0CC40E;
+    font-family: "Krungthep";
+    text-align: center;
+    overflow: hidden; /* Ensures the content is not revealed until the animation */
+    border-right: .15em solid orange; /* The typwriter cursor */
+    white-space: nowrap; /* Keeps the content on a single line */
+    letter-spacing: .15em; /* Adjust as needed */
+    animation: 
+      typing 2.5s steps(30, end),
+      blink-caret .5s step-end infinite;
+  }
+
+  .player2 {
+    color: black;
+    font-family: "Krungthep";
+    text-align: center;
+    overflow: hidden; /* Ensures the content is not revealed until the animation */
+    border-right: .15em solid orange; /* The typwriter cursor */
+    white-space: nowrap; /* Keeps the content on a single line */
+    letter-spacing: .15em; /* Adjust as needed */
+    animation: 
+      typing 2s steps(30, end),
+      blink-caret .5s step-end infinite;
+  }
+  
+  /* The typing effect */
+  @keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+  }
+
+  
+  /* The typewriter cursor effect */
+  @keyframes blink-caret1 {
+    from, to { border-color: transparent }
+    50% { border-color: orange }
+  }
+
+  .stamp1{
+    height:100px;
+    width:100px;
+    /* left:200px;
+    top:20px; */
+    border-radius:5px;
+    /* position: relative; */
+    background-color:#77df7c;
+    -webkit-animation-name: pulse;
+    animation-name: pulse;
+    animation-delay:2.5s;
+    -webkit-animation-delay:2.5s;
+    -webkit-animation-duration: 0.5s;
+    animation-duration: 0.5s;
+    opacity: 0;
+    -webkit-animation-fill-mode:forwards;
+     animation-fill-mode:forwards;
+     font-family: "Krungthep";
+     font-size: 13px;
+     text-align:center;
+     float:left;
+     margin-right:1%;;
+  }
+
+  .stamp2{
+    height:100px;
+    width:100px;
+    /* left:200px;
+    top:20px; */
+    border-radius:5px;
+    /* position:relative; */
+    background-color:#f79393;
+    -webkit-animation-name: pulse;
+    animation-name: pulse;
+    animation-delay:2.5s;
+    -webkit-animation-delay:2.5s;
+    -webkit-animation-duration: 0.5s;
+    animation-duration: 0.5s;
+    opacity: 0;
+    -webkit-animation-fill-mode:forwards;
+     animation-fill-mode:forwards;
+     font-family: "Krungthep";
+     font-size: 13px;
+     text-align:center;
+     float:left;
+     margin-right:60%;
+  }
+
+  .stamp3{
+    height:100px;
+    width:100px;
+    /* left:200px;
+    top:20px; */
+    border-radius:5px;
+    /* position:relative; */
+    background-color:#9696f9;
+    -webkit-animation-name: pulse;
+    animation-name: pulse;
+    animation-delay:2.5s;
+    -webkit-animation-delay:2.5s;
+    -webkit-animation-duration: 0.5s;
+    animation-duration: 0.5s;
+    opacity: 0;
+    -webkit-animation-fill-mode:forwards;
+     animation-fill-mode:forwards;
+     font-family: "Krungthep";
+     font-size: 13px;
+     text-align:center;
+     margin-left:50%;
+     margin-right:1%;
+     float:left;
+  }
+
+  .stamp4{
+    height:100px;
+    width:100px;
+    /* left:200px;
+    top:20px; */
+    border-radius:5px;
+    /* position:relative; */
+    background-color:#fffc98;
+    -webkit-animation-name: pulse;
+    animation-name: pulse;
+    animation-delay:2.5s;
+    -webkit-animation-delay:2.5s;
+    -webkit-animation-duration: 0.5s;
+    animation-duration: 0.5s;
+    opacity: 0;
+    -webkit-animation-fill-mode:forwards;
+     animation-fill-mode:forwards;
+     font-family: "Krungthep";
+     font-size: 13px;
+     text-align:center;
+     float:left;
+  }
+  
+  @-webkit-keyframes pulse{
+    0%{
+      opacity: 0;
+    }
+    10%{
+      opacity:.50;
+      transform-origin: 50% 50%;
+      transform: rotate(-2deg) scale(5);
+      transition: all .3s cubic-bezier(0.6, 0.04, 0.98, 0.335);
+    }
+    100%{
+      opacity:1;
+      transform: rotate(-15deg) scale(1);
+    }
+  }
+
+  .stamp_cl {
+    width: 40%;
+    margin:auto;
+    padding:20px;
+    /* border: 5px solid black; */
+
+  }
+
+
+.question {
+    font-family: "Krungthep";
+    font-size: 40px;
+    text-align: center;
+    padding-bottom: 2%;
+}
 </style>
