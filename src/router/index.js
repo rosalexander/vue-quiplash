@@ -8,6 +8,7 @@ import Ready from '@/components/Ready'
 import Game from '@/components/Game'
 import Answers from '@/components/Answers'
 import Results from '@/components/Results'
+import Response from '@/components/Response'
 
 Vue.use(Router)
 
@@ -55,6 +56,12 @@ const routes = [
     path: '/results',
     name: 'Results',
     component: Results
+  },
+
+  {
+    path: '/response',
+    name: 'Response',
+    component: Response
   }
 ]
 
