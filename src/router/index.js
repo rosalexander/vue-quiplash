@@ -8,6 +8,7 @@ import Ready from '@/components/Ready'
 import Game from '@/components/Game'
 import Answers from '@/components/Answers'
 import Results from '@/components/Results'
+import Timer from '@/components/Timer'
 
 Vue.use(Router)
 
@@ -55,6 +56,12 @@ const routes = [
     path: '/results',
     name: 'Results',
     component: Results
+  },
+
+  {
+    path: '/timer',
+    name: 'Timer',
+    component: Timer
   }
 ]
 
