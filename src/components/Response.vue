@@ -10,7 +10,7 @@
         <hr>
         <div class="cardRow">
             <form action="">
-                <input id="response" type="text" name="response" placeholder="Enter response here...">
+                <textarea rows="10" cols="30" maxlength= 140 id="response" placeholder="Enter response here..."></textarea>
             </form>
 
         </div>
@@ -85,26 +85,26 @@
     #response {
         background-color: black;
         color:white;
-        margin-bottom: 50px;
-        padding-bottom: 50%;
-        padding-right: 35%;
+        font-family: "Krungthep";
+        height: 50%;
+        margin-top:20%;
 
     }
-
-    .cardRow {
-        text-align: left;
-        
-    }
-
-    input:focus {
-        text-align: left;
-    }
-    input[type="text"]::-webkit-input-placeholder {
+    textarea::-webkit-input-placeholder {
         color: white;
-        opacity: 50%;
-        
-        
+        font-family: "Krungthep";
     }
+
+    #myProgress {
+        width: 100%;
+        background-color: grey;
+    }
+    #myBar {
+        width: 1%;
+        height: 30px;
+        background-color: green;
+    }
+
 
 
 </style>

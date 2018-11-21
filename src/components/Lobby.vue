@@ -25,7 +25,7 @@
             
             <div v-if="!hasName">
                 <form @submit.prevent="handleEnter">
-                    <input type="text" id="roundInput" v-model="username" required min="4"><br>
+                    <input autocomplete="off" type="text" id="roundInput" v-model="username" required min="4"><br>
                     <button type="submit" id="lobbyCreate">ENTER NAME</button>
                 </form>
                 <br>
@@ -37,13 +37,13 @@
             </div> -->
             <div v-else>
                 <form @submit.prevent="rename">
-                    <input type="submit" value="RENAME">
+                    <input autocomplete="off" type="submit" value="RENAME">
                 </form>
                 <br>
             </div>
 
             <form @submit.prevent="startGame">
-                <input type="submit" value="START GAME">
+                <input autocomplete="off" type="submit" value="START GAME">
             </form>
         </div> 
     </div>
