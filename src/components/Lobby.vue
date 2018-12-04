@@ -4,7 +4,13 @@
             LOBBY
             <br>
             <button class="btnPin">PIN: {{pin}} </button>
+
+            <div v-if="admin">
+                <h2>You are the admin. Your screen will be used to display the game. Admins will not play the game.</h2>
+            </div>
         </div>
+
+        
         
         <div class="waitingMessage">
 
@@ -12,7 +18,7 @@
 
             <br>
 
-            <ul v-for="member in members">
+            <ul v-for="member in members" :key="member">
                     {{ member }}
             </ul>
 
@@ -22,10 +28,9 @@
         
 
         <div class=roundInput>
-            
             <div v-if="!hasName">
                 <form @submit.prevent="handleEnter">
-                    <input autocomplete="off" type="text" id="roundInput" v-model="username" required min="4"><br>
+                    <input type="text" id="roundInput" v-model="username" required min="4"><br>
                     <button type="submit" id="lobbyCreate">ENTER NAME</button>
                 </form>
                 <br>
@@ -37,13 +42,19 @@
             </div> -->
             <div v-else>
                 <form @submit.prevent="rename">
-                    <input autocomplete="off" type="submit" value="RENAME">
+                    <input type="submit" value="RENAME">
                 </form>
                 <br>
             </div>
 
-            <form @submit.prevent="startGame">
-                <input autocomplete="off" type="submit" value="START GAME">
+            <form @submit.prevent="ready">
+                <input type="submit" value="READY">
+            </form>
+
+            <br>
+
+            <form @submit.prevent="startGame" v-if="admin">
+                <input type="submit" value="START GAME">
             </form>
         </div> 
     </div>
@@ -65,8 +76,10 @@
                 messages: [],
                 members: [],
                 socket : io('http://' + window.location.hostname + ':3000'),
+                socket_id: null,
                 user_id : localStorage.getItem('uUID'),
-                pin: this.$route.params.id
+                pin: this.$route.params.id,
+                admin: false
             }
         },
 
@@ -95,11 +108,16 @@
                 this.removeUser();
             },
 
+            ready() {
+
+            },
+
             addUser() {
                 console.log("Adding user to lobby")
                 this.socket.emit('add_user_to_lobby', {
                     pin: this.pin,
-                    username: this.username
+                    username: this.username,
+                    user_id: this.user_id
                 })
             },
 
@@ -107,12 +125,16 @@
                 console.log("Removing user from lobby")
                 this.socket.emit('remove_user_from_lobby', {
                     pin: this.pin,
-                    username: this.username
+                    username: this.username,
+                    user_id: this.user_id
                 })
+
             }
         },
 
         created() {
+
+
             if (this.user_id == null) {
                 this.user_id = Math.random().toString(24)
                 localStorage.setItem('uUID', this.user_id)
@@ -134,18 +156,44 @@
 
         mounted() {
 
+            this.socket.on('connect', () => {
+                this.socket_id = this.socket.id
+                console.log(this.socket_id)
+            })
+
+            this.socket.on('begin_disconnect', () => {
+                console.log("Removing user from lobby")
+                this.socket.emit('remove_user_from_lobby', {
+                    pin: this.pin,
+                    username: this.username,
+                    user_id: this.user_id
+                })
+            })
+
             this.socket.on('list_users_in_lobby', function(data) {
               if (this.pin == data.pin) {
                 this.members = data.members
+                console.log(this.members)
+                if (this.members.includes(this.username)) {
+                    this.socket.emit('set_admin_in_lobby', {pin: this.pin, user_id: this.user_id})
+                }
               }
-              
+
+            }.bind(this))
+
+            this.socket.on('get_admin_in_lobby', function(data) {
+                if (this.pin == data.pin) {
+                    if (this.user_id == data.user_id) {
+                        this.admin = true
+                    } else {
+                        this.admin = false
+                    }
+                }
             }.bind(this))
         },
 
         beforeDestroy() {
-            this.removeUser()
             this.socket.disconnect(true)
-
         }
         
     }
