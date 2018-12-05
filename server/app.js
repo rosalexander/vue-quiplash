@@ -1,3 +1,7 @@
+/*
+Author: Alexander Ros
+*/
+
 
 const express = require('express'),
     http=require('http'),
@@ -17,17 +21,51 @@ app.get('/', function (req, res) {
 
 server.listen(port, () => console.log('Server running on port: ' + port));
 
+/**
+ * Get the username of the client
+ * 
+ * @param {string} user_id - The session ID of the client
+ * @returns {Promise} Promise object represents the username
+ */
 function get_username(user_id) {
     return redis.hget('users', user_id);
 }
 
+/**
+ * Get the list of members in a lobby
+ * 
+ * @param {string} pin 
+ * @returns {Promise} Promise object represents the list of members
+ */
 function get_list_users_in_lobby(pin) {
     return redis.smembers(pin);
+}
+
+/**
+ * Remove id mappings from redis hashes 'id_map' and 'id_to_lobby'
+ * 
+ * @param {string} socket_id - The ID of the client socket
+ */
+async function remove_socket_mapping(socket_id) {
+    var session_id = await redis.hget('id_map', socket_id);
+    var deleted = await redis.hdel('id_map', socket_id);    
+    if (deleted == 1) {
+        return redis.hdel('id_to_lobby', session_id)
+        .then((resolved) => {
+            if (resolved) {
+                console.log("Mappings for " + session_id + " removed");
+            };
+        });
+    };
+
 }
 
 io.on('connection', function(socket) {
     console.log("Socket ID: " + socket.id)
 
+    /**
+     * Removes a user 
+     */
     socket.on('disconnect', function() {
         console.log("Disconnecting " + socket.id)
 
@@ -50,7 +88,9 @@ io.on('connection', function(socket) {
                     io.emit('list_users_in_lobby', {pin: lobby, members: result});
                 }.bind(lobby));
             }.bind(lobby))
-        })
+        }).then(() => {
+            remove_socket_mapping(socket.id)
+        });
     });
 
     socket.on('ask_list_users_in_lobby', function(data) {

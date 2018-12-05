@@ -174,9 +174,6 @@
               if (this.pin == data.pin) {
                 this.members = data.members
                 console.log(this.members)
-                if (this.members.includes(this.username)) {
-                    this.socket.emit('set_admin_in_lobby', {pin: this.pin, user_id: this.user_id})
-                }
               }
 
             }.bind(this))
