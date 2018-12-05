@@ -64,9 +64,12 @@ io.on('connection', function(socket) {
     console.log("Socket ID: " + socket.id)
 
     /**
-     * Removes a user 
+     * Removes a user
+     * 
+     * @emits 'list_users_in_lobby'
      */
     socket.on('disconnect', function() {
+
         console.log("Disconnecting " + socket.id)
 
         var get_id = redis.hget('id_map', socket.id);
@@ -75,9 +78,6 @@ io.on('connection', function(socket) {
         });
         var get_username = get_id.then((user_id) => {
             return redis.hget('users', user_id)
-        });
-        var get_users = get_lobby.then((lobby) => {
-            return redis.smembers(lobby)
         });
 
         Promise.all([get_lobby, get_username])
@@ -93,6 +93,11 @@ io.on('connection', function(socket) {
         });
     });
 
+    /**
+     * Emits 'list_users_in_lobby' when called. Unused
+     * 
+     * @emits 'list_users_in_lobby'
+     */
     socket.on('ask_list_users_in_lobby', function(data) {
         get_list_users_in_lobby(data.pin)
         .then( function(result) {
@@ -100,10 +105,18 @@ io.on('connection', function(socket) {
         }.bind(data))
     });
 
+    /** CHAT ROOM FUNCTION
+     * Prints to the console the id of a joined user
+     */
     socket.on('join', function(data){
         console.log(data._id + ' has joined');
     });
 
+    /** CHAT ROOM FUNCTION
+     * Retrieve stored messages on redis and sends to client
+     * 
+     * @emits 'message_history'
+     */
     redis.lrange('messages', 0, -1).then(function(result) {
         return result.map(function(x) {
             return JSON.parse(x);
@@ -112,19 +125,37 @@ io.on('connection', function(socket) {
         io.emit('message_history', result.reverse());
     });
     
-
+    /** CHAT ROOM FUNCTION
+     * Gets message from client and sends to all clients and stores in redis cache
+     * 
+     * @param {string} data
+     * @emits 'message'
+     */
     socket.on('send_message', function(data) {
         io.emit('message', data)
         redis.lpush('messages', JSON.stringify(data));
 
     });
 
+    /**
+     * Maps a new client session id to a username in 'users' and a socket id to a session id in 'id_map'
+     * 
+     * @param {Object} data
+     * @param {string} data.user_id - The session id of a client
+     * @param {string} data.username - The chosen username of a client
+     */
     socket.on('new_client_connection', function(data) {
         console.log('New connection: ' + data.user_id);
         redis.hset('users', data.user_id, data.username);
         redis.hset('id_map', socket.id, data.user_id)
     });
 
+    /** 
+     * Takes a session id and checks if it exists in 'users'. If so, the username of the session id is returned for the client to use.
+     * 
+     * @param {string} user_id - The session id of a client
+     * @emits 'get_username'
+     */
     socket.on('get_existing_client_connection', function(user_id) {
         console.log("Retrieving existing client connection for " + user_id)
         redis.hget('users', user_id)
@@ -137,6 +168,16 @@ io.on('connection', function(socket) {
                 redis.hset('id_map', socket.id, user_id);});
     });
 
+
+    /**
+     * Add username to a lobby, then maps session id to the lobby
+     * 
+     * @param {Object} data
+     * @param {string} data.username
+     * @param {string} data.pin
+     * @param {string} data.user_id
+     * @emits 'list_users_in_lobby'
+     */
     socket.on('add_user_to_lobby', function(data) {
         console.log("Adding user " + data.username + " to lobby " + data.pin);
         redis.sadd(data.pin, data.username).then(() => {
@@ -148,6 +189,9 @@ io.on('connection', function(socket) {
         })
     });
 
+    /** DEPRECRATED FUNCTION
+     * Removes user from a lobby.
+     */
     socket.on('remove_user_from_lobby', function(data) {
         console.log("Removing user " + data.username + " from lobby " + data.pin);
         redis.srem(data.pin, data.username).then(() => {
@@ -160,12 +204,25 @@ io.on('connection', function(socket) {
         
     });
 
+    /**
+     * Gets a list of users in a lobby
+     * 
+     * @param {string} pin
+     * @emits 'list_users_in_lobby'
+     */
     socket.on('get_users_in_lobby', function(pin) {
         redis.smembers(pin).then(function(result) {
             io.emit('list_users_in_lobby', {pin: pin, members: result});
         }.bind(pin));
     });
 
+    /** DEPRECATED
+     * Set the oldest member of a lobby as the admin of the lobby
+     * 
+     * @param {Object} data
+     * @param {string} data.pin
+     * @param {string} data.user_id
+     */
     socket.on('set_admin_in_lobby', function(data) {
         redis.hexists('admin', data.pin).then((admin_exist) => {
             if (admin_exist) {
