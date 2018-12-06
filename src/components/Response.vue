@@ -25,6 +25,14 @@
                 <button class="btnPin">SUBMIT</button>
             </div>
         </div>
+        
+        <div>
+            <button class="btnPin">SUBMIT</button>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
 
  </div>
 </template>
@@ -73,6 +81,8 @@
             this.socket.on('get_prompts', function(data) {
                 console.log(data);
             })
+
+            this.progress()
         },
 
 
@@ -87,6 +97,26 @@
                     user_id: this.user_id
                 })
             },
+
+            progress() {
+                var prg = document.getElementById('progress');
+                var counter = 5;
+                var progress = 25;
+                var id = setInterval(frame, 50);
+
+                function frame() {
+                    if(progress == 500 && counter == 100) {
+                        clearInterval(id);
+                    }
+                    else {
+                        progress += 5;
+                        counter += 1;
+                        prg.style.width = progress + 'px';
+                    }
+                }
+            },
+
+            
         },
 
 
@@ -151,6 +181,24 @@
         width: 1%;
         height: 30px;
         background-color: green;
+    }
+
+    .progress-bar {
+        width: 506px;
+        height: 25px;
+        background-color: antiquewhite;
+        border-radius: 15px;
+        margin: auto;
+        margin-top: 5%;
+        padding: 3px;
+    }
+
+    .progress {
+        width: 20px;
+        height: 20px;
+        background-color: #77df7c;
+        border-radius: 15px;
+        padding: 5px;
     }
 
 
