@@ -96,7 +96,7 @@
                 var prg = document.getElementById('progress');
                 var counter = 5;
                 var progress = 25;
-                var id = setInterval(frame, 200);
+                var id = setInterval(frame, 150);
 
                 function frame() {
                     if(progress == 500 && counter == 100) {
@@ -163,33 +163,7 @@
         font-family: "Krungthep";
     }
 
-    #myProgress {
-        width: 100%;
-        background-color: grey;
-    }
-    #myBar {
-        width: 1%;
-        height: 30px;
-        background-color: green;
-    }
 
-    .progress-bar {
-        width: 506px;
-        height: 25px;
-        background-color: antiquewhite;
-        border-radius: 15px;
-        margin: auto;
-        margin-top: 5%;
-        padding: 3px;
-    }
-
-    .progress {
-        width: 10px;
-        height: 20px;
-        background-color: #77df7c;
-        border-radius: 15px;
-        padding: 5px;
-    }
 
 
 
