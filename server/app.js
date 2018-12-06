@@ -20,7 +20,7 @@ app.get('/', function (req, res) {
     res.send('Server running');
 });
 
-var obj = JSON.parse(fs.readFileSync(__dirname + '/prompts.json', 'utf8'));
+var prompt_data = JSON.parse(fs.readFileSync(__dirname + '/prompts.json', 'utf8'));
 redis.flushall();
 
 
@@ -62,13 +62,15 @@ async function remove_socket_mapping(socket_id) {
             };
         });
     };
+};
 
-}
+async function get_prompt(pin, prompt_id) {
+    let prompt = await redis.lindex('prompt_' + pin, prompt_id);
+    return prompt;
+};
 
 io.on('connection', function(socket) {
     console.log("Socket ID: " + socket.id)
-    io.emit('connectplease')
-    console.log('emitted')
 
     /**
      * Removes a user when socket disconnection is detected
@@ -277,19 +279,38 @@ io.on('connection', function(socket) {
         io.emit('start_game', {pin: data.pin});
     });
 
-    socket.on('set_prompts', function (data) {
+    socket.on('set_prompts', function (pin) {
         let prompts = [];
         let prompt_ids = new Set();
 
         do {
-            prompt_ids.add(Math.floor(Math.random() * obj.length));
+            prompt_ids.add(Math.floor(Math.random() * prompt_data.length));
         } while (prompt_ids.size < 10)
 
         prompt_ids.forEach((id) => {
-            prompts.push(obj[id]['prompt'])
+            redis.lpush('prompts_' + pin, id)
+            prompts.push(prompt_data[id]['prompt'])
         })
 
-        io.emit('get_prompts', {pin: data, prompts: prompts})
+        let prompt_ids_array = [...prompt_ids]
+
+
+        let prompt_json = prompts.map(function(e, i) {
+            return {prompt: e, prompt_id: prompt_ids_array[i]}
+        })
+
+        console.log(prompt_json)
+
+        redis.hset('prompts', pin, JSON.stringify(prompt_ids_array)).catch((error) => {
+            console.error(error);
+        })
+
+        io.emit('get_prompts', {pin: pin, prompts: prompts})
+    });
+
+    socket.on('set_prompt', function(data) {
+        let prompt = get_prompt(data.pin, parseInt(data.prompt_id))
+        io.emit('get_prompt', {pin: data.pin, prompt: prompt, promt_id: data.prompt_id})
     });
 
 

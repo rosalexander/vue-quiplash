@@ -10,20 +10,28 @@
             ROUND 1
         </div>
         <div v-if="!admin">
-            <div class="question">
-                {{prompts[index]}}
-            </div>
-            <hr>
-            <div class="cardRow">
-                <form action="">
-                    <textarea rows="10" cols="30" maxlength= 140 id="response" v-model="response" placeholder="Enter response here..."></textarea>
+            <div v-if="this.index < this.prompts.length">
+                <div class="question">
+                    {{prompts[index]}}
+                </div>
+                <hr>
+                <div class="cardRow">
+                    <form action="">
+                        <textarea rows="10" cols="30" maxlength= 140 id="response" v-model="response" placeholder="Enter response here..."></textarea>
+                    </form>
+
+                </div>
+
+                <form @submit.prevent="submit" >
+                    <input type="submit" class="btnPin" value="Submit">
                 </form>
-
             </div>
-
-            <form @submit.prevent="submit" >
-                <input type="submit" class="btnPin" value="Submit">
-            </form>
+                
+            <div v-else>
+                <div class="question">
+                    All prompts have been answered. Sit tight and relax!
+                </div>
+            </div>
 
             
         </div>
@@ -130,6 +138,9 @@
 
             submit() {
                 console.log(this.response)
+                this.index += 1
+                this.answers.push(this.response)
+                this.response = ''
             }
 
             
