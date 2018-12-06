@@ -6,8 +6,9 @@
         <router-link to="/ready">Ready</router-link>
         <router-link to="/chat">Chat</router-link>
       </div>
-      <router-view/>
-    </div>
+      <router-view></router-view>
+</div>
+
 </template>
 
 <script>
@@ -18,8 +19,12 @@ export default {
 
 
 <style>
-   body{
+
+.gen-body {
     background: #96C4F9;
+    height: 100vh;
+    width: 100vw;
+
 }
 
 hr {
@@ -438,6 +443,25 @@ input[type=submit]:hover {
     display: flex;
     justify-content: center;
   }
+
+
+.progress-bar {
+    width: 506px;
+    height: 25px;
+    background-color: antiquewhite;
+    border-radius: 15px;
+    margin: auto;
+    margin-top: 5%;
+    padding: 3px;
+}
+
+.progress {
+    width: 10px;
+    height: 20px;
+    background-color: #77df7c;
+    border-radius: 15px;
+    padding: 5px;
+}
 
   
   
