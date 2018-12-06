@@ -1,5 +1,7 @@
 <template>
     <div class="home">
+        <h1>{{connected}}</h1>
+        <h1>{{hello}}</h1>
         <div class="header">
             NEW GAME
         </div>
@@ -18,6 +20,10 @@
             <form @submit.prevent="handleCreate">
                 <button type="submit" id="lobbyCreate">Create Lobby</button>
             </form>
+
+            <form @submit.prevent="handleTest">
+                <button type="submit" id="lobbyCreate">Test</button>
+            </form>
         
         </div> 
     </div> 
@@ -26,14 +32,16 @@
 <script>
 
 import router from '@/router'
+import { mapState } from 'vuex'
 
 export default {
     name: 'Home',
     data () {
         return {
-        pin: ''
+            pin: ''
         }
-  },
+    },
+
 
     methods: {
 
@@ -51,6 +59,24 @@ export default {
 
         handleCreate() {
             router.push('lobby/' + this.makeid())
+        },
+
+        handleTest() {
+            this.$store.commit('connectplease')
+        }
+    },
+
+    // sockets: {
+
+    // },
+
+    computed: {
+        connected () {
+            return this.$store.state.connected;
+        },
+
+        hello () {
+            return this.$store.state.test_state;
         }
     }
 }

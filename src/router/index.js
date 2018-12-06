@@ -59,7 +59,7 @@ const routes = [
   },
 
   {
-    path: '/response',
+    path: '/response/:id',
     name: 'Response',
     component: Response
   }

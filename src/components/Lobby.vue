@@ -53,7 +53,7 @@
 
             <br>
 
-            <form @submit.prevent="startGame" v-if="admin">
+            <form @submit.prevent="startGame">
                 <input type="submit" value="START GAME">
             </form>
         </div> 
@@ -75,7 +75,7 @@
                 message: '',
                 messages: [],
                 members: [],
-                socket : io('http://' + window.location.hostname + ':3000'),
+                socket: io('http://' + window.location.hostname + ':3000'),
                 socket_id: null,
                 user_id : localStorage.getItem('uUID'),
                 pin: this.$route.params.id,
@@ -100,7 +100,7 @@
 
             startGame() {
                 console.log("Start game")
-                router.push({name: 'Game', prams: {id: this.pin}})
+                this.socket.emit('start_game')
             },
 
             rename() {
@@ -187,6 +187,10 @@
                     }
                 }
             }.bind(this))
+
+            this.socket.on('start_game', function() {
+                router.push({name: 'Response', prams: {id: this.pin}})
+            })
         },
 
         beforeDestroy() {

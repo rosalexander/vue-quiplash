@@ -8,7 +8,8 @@ const express = require('express'),
     app = express(),
     server = http.createServer(app),
     io = require('socket.io').listen(server),
-    port=3000
+    port=3000,
+    fs = require('fs')
 
 var Redis = require('ioredis');
 var redis_address = process.env.REDIS_ADDRESS || 'redis://127.0.0.1:6379';
@@ -18,6 +19,9 @@ var redis = new Redis(redis_address);
 app.get('/', function (req, res) {
     res.send('Server running');
 });
+
+var obj = JSON.parse(fs.readFileSync(__dirname + '/prompts.json', 'utf8'));
+console.log(obj[0]['prompt'])
 
 server.listen(port, () => console.log('Server running on port: ' + port));
 
@@ -34,7 +38,7 @@ function get_username(user_id) {
 /**
  * Get the list of members in a lobby
  * 
- * @param {string} pin 
+ * @param {string} pin cd 
  * @returns {Promise} Promise object represents the list of members
  */
 function get_list_users_in_lobby(pin) {
@@ -62,9 +66,11 @@ async function remove_socket_mapping(socket_id) {
 
 io.on('connection', function(socket) {
     console.log("Socket ID: " + socket.id)
+    io.emit('connectplease')
+    console.log('emitted')
 
     /**
-     * Removes a user
+     * Removes a user when socket disconnection is detected
      * 
      * @emits 'list_users_in_lobby'
      */
@@ -82,12 +88,14 @@ io.on('connection', function(socket) {
 
         Promise.all([get_lobby, get_username])
         .then(([lobby, username]) => {
-            console.log("Removing " + username + " from " + lobby);
-            redis.srem(lobby, username).then(function() {
-                redis.smembers(lobby).then(function(result) {
-                    io.emit('list_users_in_lobby', {pin: lobby, members: result});
-                }.bind(lobby));
-            }.bind(lobby))
+            if (username && lobby) {
+                console.log("Removing " + username + " from " + lobby);
+                redis.srem(lobby, username).then(function() {
+                    redis.smembers(lobby).then(function(result) {
+                        io.emit('list_users_in_lobby', {pin: lobby, members: result});
+                    }.bind(lobby));
+                }.bind(lobby))
+            }
         }).then(() => {
             remove_socket_mapping(socket.id)
         });
@@ -252,5 +260,19 @@ io.on('connection', function(socket) {
         });
         
     });
+
+    /**
+     * Start game
+     */
+
+    socket.on('start_game', function() {
+        io.emit('start_game');
+    });
+
+    socket.on('set_prompts', function (data) {
+        var i = Math.floor(Math.random() * obj.length);
+        io.emit('get_prompts', {pin: data, prompt: obj[i]['prompt']})
+    });
+
 
 });
