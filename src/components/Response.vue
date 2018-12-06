@@ -11,23 +11,28 @@
         </div>
         <div v-if="!admin">
             <div class="question">
-                "A test prompt"
+                {{prompts[index]}}
             </div>
             <hr>
             <div class="cardRow">
                 <form action="">
-                    <textarea rows="10" cols="30" maxlength= 140 id="response" placeholder="Enter response here..."></textarea>
+                    <textarea rows="10" cols="30" maxlength= 140 id="response" v-model="response" placeholder="Enter response here..."></textarea>
                 </form>
 
             </div>
 
-            <div>
-                <button class="btnPin">SUBMIT</button>
-            </div>
+            <form @submit.prevent="submit" >
+                <input type="submit" class="btnPin" value="Submit">
+            </form>
+
+            
         </div>
-        
-        <div>
-            <button class="btnPin">SUBMIT</button>
+        <div v-else>
+            <div class="question">
+                Rules
+                <br>
+                Answer each prompt as best as possible before time runs out! Afterwards, everyone will vote for their favorite answer.
+            </div>
         </div>
 
         <div class="progress-bar">
@@ -52,6 +57,9 @@
                 username: '',
                 members: [],
                 prompts: [],
+                index: 0,
+                answers: [],
+                response: '',
                 admin: false,
                 pin: this.$route.params.id
             }
@@ -79,8 +87,12 @@
 
         mounted() {
             this.socket.on('get_prompts', function(data) {
-                console.log(data);
-            })
+                if (true) {
+                    this.prompts = data.prompts;
+                    console.log(this.prompts);
+                }
+                
+            }.bind(this))
 
             this.progress()
         },
@@ -102,7 +114,7 @@
                 var prg = document.getElementById('progress');
                 var counter = 5;
                 var progress = 25;
-                var id = setInterval(frame, 50);
+                var id = setInterval(frame, 100);
 
                 function frame() {
                     if(progress == 500 && counter == 100) {
@@ -115,6 +127,10 @@
                     }
                 }
             },
+
+            submit() {
+                console.log(this.response)
+            }
 
             
         },

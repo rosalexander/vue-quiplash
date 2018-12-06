@@ -21,7 +21,8 @@ app.get('/', function (req, res) {
 });
 
 var obj = JSON.parse(fs.readFileSync(__dirname + '/prompts.json', 'utf8'));
-console.log(obj[0]['prompt'])
+redis.flushall();
+
 
 server.listen(port, () => console.log('Server running on port: ' + port));
 
@@ -94,7 +95,10 @@ io.on('connection', function(socket) {
                     redis.smembers(lobby).then(function(result) {
                         io.emit('list_users_in_lobby', {pin: lobby, members: result});
                     }.bind(lobby));
-                }.bind(lobby))
+                }.bind(lobby));
+                if (username == "Admin") {
+                    redis.hdel('admin', lobby);
+                }
             }
         }).then(() => {
             remove_socket_mapping(socket.id)
@@ -194,6 +198,10 @@ io.on('connection', function(socket) {
             }.bind(data.pin));
         }).then(() => {
             redis.hset('id_to_lobby', data.user_id, data.pin);
+        }).then(() => {
+            if (data.username == "Admin") {
+                redis.hset('admin', data.pin, data.user_id);
+            }
         })
     });
 
@@ -265,13 +273,23 @@ io.on('connection', function(socket) {
      * Start game
      */
 
-    socket.on('start_game', function() {
-        io.emit('start_game');
+    socket.on('start_game', function(data) {
+        io.emit('start_game', {pin: data.pin});
     });
 
     socket.on('set_prompts', function (data) {
-        var i = Math.floor(Math.random() * obj.length);
-        io.emit('get_prompts', {pin: data, prompt: obj[i]['prompt']})
+        let prompts = [];
+        let prompt_ids = new Set();
+
+        do {
+            prompt_ids.add(Math.floor(Math.random() * obj.length));
+        } while (prompt_ids.size < 10)
+
+        prompt_ids.forEach((id) => {
+            prompts.push(obj[id]['prompt'])
+        })
+
+        io.emit('get_prompts', {pin: data, prompts: prompts})
     });
 
 

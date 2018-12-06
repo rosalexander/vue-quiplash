@@ -100,7 +100,7 @@
 
             startGame() {
                 console.log("Start game")
-                this.socket.emit('start_game')
+                this.socket.emit('start_game', {pin: this.pin})
             },
 
             rename() {
@@ -134,7 +134,6 @@
 
         created() {
 
-
             if (this.user_id == null) {
                 this.user_id = Math.random().toString(24)
                 localStorage.setItem('uUID', this.user_id)
@@ -155,6 +154,8 @@
         },
 
         mounted() {
+
+            this.pin = this.$route.params.id
 
             this.socket.on('connect', () => {
                 this.socket_id = this.socket.id

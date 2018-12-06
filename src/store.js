@@ -8,6 +8,7 @@ export default new Vuex.Store({
     
     state: {
         test_state: "Hello World!",
+        game_state: null,
         connected: false,
     },
 
@@ -18,21 +19,19 @@ export default new Vuex.Store({
     },
 
     mutations: {
-        SOCKET_CONNECT(state) {
-            state.connected = true;
-            console.log("connected!!!!")
+        state_lobby() {
+            state.game_state = "lobby"
         },
 
-        SOCKET_DISCONNECT(state) {
-            state.connected = false;
+        state_response() {
+            state.game_state = "response"
         },
 
-        connectplease(state) {
-            state.connected = true;
+        state_result() {
+            state.game_state = "result"
         },
 
-        SOCKET_CONNECTPLEASE(state) {
-            state.test_state = 'foobar';
-        }
+
+        
     }
 })
