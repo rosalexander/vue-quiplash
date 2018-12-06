@@ -1,5 +1,5 @@
  <template>
- <div>
+ <div class="response-body" style="height:100vh; background:#BF2437">
         <div>
             {{user_id}}
             {{username}}
@@ -96,7 +96,7 @@
                 var prg = document.getElementById('progress');
                 var counter = 5;
                 var progress = 25;
-                var id = setInterval(frame, 50);
+                var id = setInterval(frame, 200);
 
                 function frame() {
                     if(progress == 500 && counter == 100) {
@@ -121,10 +121,6 @@
 </script>
 
 <style>
-    body {
-        background: #BF2437;
-    }
-
     .question {
     font-family: "Krungthep";
     font-size: 40px;
@@ -188,7 +184,7 @@
     }
 
     .progress {
-        width: 20px;
+        width: 10px;
         height: 20px;
         background-color: #77df7c;
         border-radius: 15px;

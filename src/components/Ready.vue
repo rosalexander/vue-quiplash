@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="gen-body" style="height:100vh; background:#96C4F9">
         <div class="header">
             GET READY
         </div>

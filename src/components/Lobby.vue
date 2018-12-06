@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="gen-body" style="height:100vh; background:#96C4F9">
         <div class="header">
             LOBBY
             <br>
@@ -27,7 +27,7 @@
 
         
 
-        <div class=roundInput>
+        <div class="roundInput" style="height:100vh; background:#96C4F9">
             <div v-if="!hasName">
                 <form @submit.prevent="handleEnter">
                     <input type="text" id="roundInput" v-model="username" required min="4"><br>
