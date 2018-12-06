@@ -1,11 +1,11 @@
 <template>
-    <div class="home">
+    <div class="home" style="height:100vh; background:#96C4F9">
         <h1>{{connected}}</h1>
         <h1>{{hello}}</h1>
         <div class="header">
             NEW GAME
         </div>
-        <div class=roundInput>
+        <div class="roundInput" style="height:100vh; background:#96C4F9">
             
             <div class="title">
                 Enter Pin
