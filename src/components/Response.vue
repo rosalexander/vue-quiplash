@@ -9,26 +9,29 @@
         <div class="headerRound">
             ROUND 1
         </div>
-        <div class="question">
-            "A test prompt"
-        </div>
-        <hr>
-        <div class="cardRow">
-            <form action="">
-                <textarea rows="10" cols="30" maxlength= 140 id="response" placeholder="Enter response here..."></textarea>
-            </form>
+        <div v-if="!admin">
+            <div class="question">
+                "A test prompt"
+            </div>
+            <hr>
+            <div class="cardRow">
+                <form action="">
+                    <textarea rows="10" cols="30" maxlength= 140 id="response" placeholder="Enter response here..."></textarea>
+                </form>
 
-        </div>
+            </div>
 
+            <div>
+                <button class="btnPin">SUBMIT</button>
+            </div>
+        </div>
+        
         <div>
             <button class="btnPin">SUBMIT</button>
         </div>
 
         <div class="progress-bar">
-
             <div class="progress" id="progress"></div>
-
-
         </div>
 
  </div>
@@ -49,6 +52,7 @@
                 username: '',
                 members: [],
                 prompts: [],
+                admin: false,
                 pin: this.$route.params.id
             }
         },
@@ -65,10 +69,12 @@
                 if (data.user_id == this.user_id) {
                     this.username = data.username
                     this.addUser();
+                    if (this.username === 'Admin') {
+                        this.admin = true;
+                        this.socket.emit('set_prompts', this.pin)
+                    }
                 }
             }.bind(this))
-
-            this.socket.emit('set_prompts', this.pin)
         },
 
         mounted() {
