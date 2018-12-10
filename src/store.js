@@ -5,11 +5,21 @@ import createPersistedState from 'vuex-persistedstate';
 Vue.use(Vuex);
 
 export default new Vuex.Store({
+
+    plugins: [createPersistedState()],
     
     state: {
         test_state: "Hello World!",
         game_state: null,
         connected: false,
+        username: '',
+        prompts_exists: false,
+        prompts: [],
+        prompt_ids: [],
+        answers: [],
+        points: 0,
+        progress: 25,
+        counter: 5
     },
 
     actions: {
@@ -31,7 +41,36 @@ export default new Vuex.Store({
             state.game_state = "result"
         },
 
+        set_username(state, payload) {
+            state.username = payload;
+        },
+        
+        set_prompts(state, payload) {
+            state.prompts = payload.prompts;
+            state.prompt_ids = payload.prompt_ids;
+            state.prompts_exists = true;
+        },
+        
+        submit_answer(state, payload) {
+            state.answers.push(payload);
+        },
 
+        reset_prompts(state) {
+            state.prompts = [];
+            state.prompt_ids = [];
+            state.answers = [];
+            state.prompts_exists = false;
+        },
+
+        increment_timer(state) {
+            state.progress += 5;
+            state.counter += 1;
+        },
+
+        clear_timer(state) {
+            state.progress = 25;
+            state.counter = 5;
+        },
         
     }
 })

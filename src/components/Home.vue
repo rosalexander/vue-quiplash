@@ -72,7 +72,7 @@ export default {
 
     computed: {
         connected () {
-            return this.$store.state.connected;
+            return this.$store.state.username;
         },
 
         hello () {

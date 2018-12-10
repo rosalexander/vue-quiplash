@@ -119,6 +119,7 @@
                     username: this.username,
                     user_id: this.user_id
                 })
+                this.$store.commit('set_username', this.username)
             },
 
             removeUser() {
@@ -191,7 +192,9 @@
 
             this.socket.on('start_game', function() {
                 router.push({name: 'Response', prams: {id: this.pin}})
-            })
+                this.$store.commit('reset_prompts')
+                this.$store.commit('clear_timer')
+            }.bind(this))
         },
 
         beforeDestroy() {

@@ -1,5 +1,25 @@
 /*
 Author: Alexander Ros
+
+REDIS Data Structures
+Hash sets:
+    'users'
+    'id_map'
+    'id_to_lobby'
+    'admin'
+
+Set:
+    pin:
+         (VARIABLE) - the pin of the lobby
+
+List:
+    'prompt_' + pin:
+         (VARIABLE) - the pin of the lobby
+    'response_' + pin:
+        (VARIABLE) - the pin of the lobby
+    'messages'
+
+
 */
 
 
@@ -40,10 +60,11 @@ function get_username(user_id) {
  * Get the list of members in a lobby
  * 
  * @param {string} pin cd 
- * @returns {Promise} Promise object represents the list of members
+ * @returns {string[]} The list of members
  */
-function get_list_users_in_lobby(pin) {
-    return redis.smembers(pin);
+async function get_list_users_in_lobby(pin) {
+    let result = await redis.smembers(pin);
+    return result
 }
 
 /**
@@ -113,10 +134,7 @@ io.on('connection', function(socket) {
      * @emits 'list_users_in_lobby'
      */
     socket.on('ask_list_users_in_lobby', function(data) {
-        get_list_users_in_lobby(data.pin)
-        .then( function(result) {
-            io.emit('list_users_in_lobby', {pin: data.pin, members: result});
-        }.bind(data))
+        io.emit('list_users_in_lobby', {pin: data.pin, members: get_list_users_in_lobby(data.pin)});
     });
 
     /** CHAT ROOM FUNCTION
@@ -282,6 +300,7 @@ io.on('connection', function(socket) {
     socket.on('set_prompts', function (pin) {
         let prompts = [];
         let prompt_ids = new Set();
+        let user_list = get_list_users_in_lobby(pin);
 
         do {
             prompt_ids.add(Math.floor(Math.random() * prompt_data.length));
@@ -294,24 +313,45 @@ io.on('connection', function(socket) {
 
         let prompt_ids_array = [...prompt_ids]
 
-
         let prompt_json = prompts.map(function(e, i) {
             return {prompt: e, prompt_id: prompt_ids_array[i]}
         })
 
         console.log(prompt_json)
 
-        redis.hset('prompts', pin, JSON.stringify(prompt_ids_array)).catch((error) => {
-            console.error(error);
-        })
-
-        io.emit('get_prompts', {pin: pin, prompts: prompts})
+        io.emit('get_prompts', {pin: pin, prompts: prompts, prompt_ids: prompt_ids_array})
     });
 
     socket.on('set_prompt', function(data) {
         let prompt = get_prompt(data.pin, parseInt(data.prompt_id))
-        io.emit('get_prompt', {pin: data.pin, prompt: prompt, promt_id: data.prompt_id})
+        io.emit('get_prompt', {pin: data.pin, prompt: prompt, prompt_id: data.prompt_id})
     });
+
+    /**
+     * Set the prompts for players after the admin has initialized them
+     * 
+     * @param {Object} data
+     * @param {string} data.pin
+     * @param {string} data.user_id
+     */
+    socket.on('set_prompts_player', function(data) {
+        let pin = data.pin;
+        let user_id = data.user_id;
+    });
+
+    /**
+     * Submit the answer
+     * 
+     * @params {Object} data
+     * @param {string} data.prompt_id
+     * @param {string} data.answer
+     * @param {string} data.username
+     * @param {string} data.user_id
+     */
+    socket.on('submit_answer', function(data) {
+        console.log(data)
+        redis.lpush('response_' + data.pin, JSON.stringify(data))
+    })
 
 
 });

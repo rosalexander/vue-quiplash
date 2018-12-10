@@ -19,7 +19,6 @@
                     <form action="">
                         <textarea rows="10" cols="30" maxlength= 140 id="response" v-model="response" placeholder="Enter response here..."></textarea>
                     </form>
-
                 </div>
 
                 <form @submit.prevent="submit" >
@@ -33,7 +32,6 @@
                 </div>
             </div>
 
-            
         </div>
         <div v-else>
             <div class="question">
@@ -54,6 +52,7 @@
 <script>
 
     import io from 'socket.io-client';
+    import router from '@/router';
 
     export default {
         name: 'Response',
@@ -64,12 +63,13 @@
                 socket : io('http://' + window.location.hostname + ':3000'),
                 username: '',
                 members: [],
-                prompts: [],
-                index: 0,
-                answers: [],
+                prompts: this.$store.state.prompts,
+                prompt_ids: this.$store.state.prompt_ids,
+                index: this.$store.state.answers.length,
+                answers: this.$store.state.answers,
                 response: '',
                 admin: false,
-                pin: this.$route.params.id
+                pin: this.$route.params.id,
             }
         },
 
@@ -87,24 +87,33 @@
                     this.addUser();
                     if (this.username === 'Admin') {
                         this.admin = true;
-                        this.socket.emit('set_prompts', this.pin)
+                        if (!this.$store.state.prompts_exists) {
+                            this.socket.emit('set_prompts', this.pin)
+                        }
                     }
                 }
             }.bind(this))
         },
 
         mounted() {
-            this.socket.on('get_prompts', function(data) {
-                if (true) {
-                    this.prompts = data.prompts;
-                    console.log(this.prompts);
-                }
-                
+            this.socket.on('get_prompts', function(data) {       
+                this.$store.commit('set_prompts', data)
+                this.prompts = data.prompts;
+                this.prompt_ids = data.prompt_ids;
+                console.log(this.prompts);
+                this.$store.commit('clear_timer')
+                // this.progress()
             }.bind(this))
-
+            
             this.progress()
+            
         },
 
+        watch: {
+            // prompts: function() {
+            //     this.progress()
+            // }
+        },
 
 
         methods: {
@@ -120,15 +129,20 @@
 
             progress() {
                 var prg = document.getElementById('progress');
-                var counter = 5;
-                var progress = 25;
-                var id = setInterval(frame, 150);
+                var counter = this.$store.state.counter;
+                var progress = this.$store.state.progress;
+                var id = setInterval(frame.bind(this), 150);
 
                 function frame() {
-                    if(progress == 500 && counter == 100) {
+                    // console.log(counter, progress)
+                    if(progress >= 500 && counter >= 100) {
+                        this.$store.commit('clear_timer')
                         clearInterval(id);
+                        router.push({name: 'Results'})
+
                     }
                     else {
+                        this.$store.commit('increment_timer')
                         progress += 5;
                         counter += 1;
                         prg.style.width = progress + 'px';
@@ -137,11 +151,18 @@
             },
 
             submit() {
-                console.log(this.response)
+                // this.answers.push(this.response)
+                this.$store.commit('submit_answer', this.response)
+                console.log({prompt_id: this.prompt_ids[this.index], answer: this.response, username: this.username, user_id: this.user_id})
+                this.socket.emit('submit_answer', {prompt_id: this.prompt_ids[this.index], answer: this.response, username: this.username, user_id: this.user_id, pin: this.pin})
                 this.index += 1
-                this.answers.push(this.response)
                 this.response = ''
-            }
+            },
+
+            end_round() {
+                this.$store.commit('reset_prompts')
+                this.$store.commit('clear_timer')
+            },
 
             
         },
