@@ -47,13 +47,7 @@
                 <br>
             </div>
 
-            <form @submit.prevent="ready">
-                <input type="submit" value="READY">
-            </form>
-
-            <br>
-
-            <form @submit.prevent="startGame">
+            <form @submit.prevent="startGame" v-if="admin">
                 <input type="submit" value="START GAME">
             </form>
         </div> 
@@ -147,6 +141,10 @@
                     this.username = data.username
                     this.hasName = true
                     this.addUser()
+
+                    if (this.username === 'Admin') {
+                        this.admin = true;
+                    }
                 }
             }.bind(this))
 
@@ -181,21 +179,21 @@
 
             }.bind(this))
 
-            this.socket.on('get_admin_in_lobby', function(data) {
-                if (this.pin == data.pin) {
-                    if (this.user_id == data.user_id) {
-                        this.admin = true
-                    } else {
-                        this.admin = false
-                    }
-                }
-            }.bind(this))
-
             this.socket.on('start_game', function() {
                 router.push({name: 'Response', prams: {id: this.pin}})
                 this.$store.commit('reset_prompts')
                 this.$store.commit('clear_timer')
             }.bind(this))
+        },
+
+        watch: {
+            username: function() {
+                if (this.username == "Admin") {
+                    this.admin = true
+                } else {
+                    this.admin = false
+                }
+            }
         },
 
         beforeDestroy() {

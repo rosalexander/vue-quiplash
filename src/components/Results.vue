@@ -1,8 +1,11 @@
  <template>
  <div class="gen-body" style="height:100vh; background:#96C4F9">
      {{this.$store.state.pin}}
-    <div class="headerRound">
-            ROUND 1 RESULTS
+    <div class="headerRound" v-if="!show_votes">
+            ROUND 1 VOTE!
+    </div>
+    <div class="headerRound" v-else>
+            AND THE WINNER IS...
     </div>
     <div class="question">
             {{prompts[index]}}
@@ -12,13 +15,28 @@
 
     <div v-if="!voted">
         <div class="cardRow" v-for="(response, index) in responses" :key="index" >
-            <button class="card" id="stamp"  v-on:click="vote(index)"> {{response.answer}} <p> 100 </p>
+            <button class="card" id="stamp"  v-on:click="vote(index)"> {{response.answer}}
             </button>
         </div>
     </div>
-    <div class="question" v-else>
-        <h1>You have submitted your vote!</h1>
+
+    <div v-else-if="show_votes">
+        <div class="cardRow" v-for="(response, index) in responses" :key="index" >
+            <button class="card" id="stamp"  v-on:click="vote(index)"> 
+                {{response.answer}}
+                <p> By {{response.username}} </p>
+                <p> {{responses_scores[index]}} votes!</p>
+                
+            </button>
+        </div>
     </div>
+
+    <div class="question" v-else-if="voted">
+        <h1 v-if="!show_votes">You have submitted your vote!</h1>
+        <h1 v-else>Next vote starting...</h1>
+    </div>
+
+
 
     <div class="progress-bar">
         <div class="progress" id="progress"></div>
@@ -50,8 +68,9 @@
                 pin: this.$store.state.pin,
                 all_responses: [],
                 responses: [],
+                responses_scores: [],
                 voted: false,
-                show_votes: false
+                show_votes: false,
             }
         },
 
@@ -69,8 +88,10 @@
                     this.addUser();
                     if (this.username === 'Admin') {
                         this.admin = true;
-                        this.socket.emit('set_responses', this.pin)
+                        
                     }
+
+                    this.socket.emit('set_responses', this.pin)
                 }
             }.bind(this))
 
@@ -85,13 +106,18 @@
         mounted() {
             
             if(this.index < this.prompts.length) {
-                this.progress()
-            } else {
-                var prg = document.getElementById('progress')
-                prg.style.width = 500 + 'px'
+                this.sleep(3000).then(() => {this.progress()})
             }
 
             console.log(this.index, "index")
+
+            this.socket.on('get_scores', function(data) {
+                console.log(data, "get scores")
+                console.log(this.pin == data.pin)
+                if (this.pin == data.pin) {
+                    this.responses_scores = data.scores
+                }
+            }.bind(this))
             
         },
 
@@ -107,6 +133,7 @@
 
             get_responses() {
                 this.responses = []
+                this.scores = []
                 let prompt_id = this.prompt_ids[this.index]
                 this.all_responses.forEach((response) => {
                     if (response.prompt_id == prompt_id) {
@@ -127,16 +154,35 @@
                     if(progress >= 500 && counter >= 100) {
                         this.$store.commit('clear_timer')
                         
-                        if(this.index < this.prompts.length) {
+                        if(this.index < this.prompts.length - 1) {
                             clearInterval(id)
                             if (!this.voted) {
                                 this.$store.commit('submit_vote', null)
-                                this.voted = true;
                             }
-                            this.index += 1
-                            this.voted = false
-                            this.get_responses()
-                            this.progress()
+
+                            this.voted = true;
+                            
+                            this.sleep(100).then(() => {
+                                this.show_votes = true;
+                                
+                                this.set_scores(this.responses)
+                                
+                            })
+                            this.sleep(10000).then(() => {
+                                this.show_votes = false
+
+                                this.sleep(1000).then(() => {
+                                    this.voted = false
+                                    this.index += 1
+                                    this.get_responses()
+                                    this.show_votes = false
+
+                                    this.sleep(3000).then(() => {
+                                        this.progress()
+                                    })
+                                })
+                                
+                            })
                         }
         
                     }
@@ -155,8 +201,13 @@
                 this.voted = true;
             },
             
-            get_votes() {
+            set_scores(responses) {
+                this.socket.emit('set_scores', {responses: responses, pin: this.pin})
+                console.log("score setting")
+            },
 
+            sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
             }
         }
     }

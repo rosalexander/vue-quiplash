@@ -294,8 +294,10 @@ io.on('connection', function(socket) {
      */
 
     socket.on('start_game', function(data) {
+        console.log("Starting game")
         redis.del('prompts_' + data.pin)
-        redis.del('responses_' + data.pin)
+        redis.del('response_' + data.pin)
+        console.log('Deleted prompts_' + data.pin + ' and responses_' + data.pin)
         io.emit('start_game', {pin: data.pin});
     });
 
@@ -366,8 +368,32 @@ io.on('connection', function(socket) {
     }),
 
     socket.on('submit_vote', function(response) {
-        redis.zincrby('response_' + response.pin, 1, JSON.stringify(response)).catch((err) => {console.log(err)})
+        redis.zincrby('response_' + response.pin, 1, JSON.stringify(response)).catch((err) => {console.log(err)});
 
+    }),
+
+    socket.on('set_scores', function(data) {
+        
+        
+        let get_scores = new Promise((resolve, reject) => {
+            let scores = [];
+            data.responses.forEach(async function(response, index, array) {
+                console.log(response);
+                try {
+                    let score = await redis.zscore('response_' + data.pin, JSON.stringify(response));
+                    console.log(score);
+                    scores.push(score);
+                } catch (err) {
+                    console.log(err);
+                }
+                if (index === array.length - 1) resolve(scores);
+            });
+
+        });
+
+        get_scores.then((scores) => {
+            socket.emit('get_scores', {pin: data.pin, scores: scores})
+        }) 
     })
 
 
