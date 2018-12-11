@@ -321,7 +321,7 @@ io.on('connection', function(socket) {
             return {prompt: e, prompt_id: prompt_ids_array[i]}
         })
 
-        console.log(prompt_json)
+        // console.log(prompt_json)
 
         io.emit('get_prompts', {pin: pin, prompts: prompts, prompt_ids: prompt_ids_array})
     });
@@ -353,7 +353,7 @@ io.on('connection', function(socket) {
      * @param {string} data.user_id
      */
     socket.on('submit_answer', function(data) {
-        console.log(data)
+        // console.log(data)
         redis.zadd('response_' + data.pin, 1, JSON.stringify(data)).catch((err) => {console.log(err)})
     }),
 
@@ -374,15 +374,12 @@ io.on('connection', function(socket) {
 
     socket.on('set_scores', function(data) {
         
-        
         let get_scores = new Promise((resolve, reject) => {
             let scores = [];
             data.responses.forEach(async function(response, index, array) {
-                console.log(response);
                 try {
                     let score = await redis.zscore('response_' + data.pin, JSON.stringify(response));
-                    console.log(score);
-                    scores.push(score);
+                    scores.push(score - 1);
                 } catch (err) {
                     console.log(err);
                 }
