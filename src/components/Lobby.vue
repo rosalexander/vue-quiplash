@@ -157,6 +157,7 @@
         mounted() {
 
             this.pin = this.$route.params.id
+            this.$store.commit('set_pin', this.pin)
 
             this.socket.on('connect', () => {
                 this.socket_id = this.socket.id

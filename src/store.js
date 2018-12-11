@@ -16,10 +16,12 @@ export default new Vuex.Store({
         prompts_exists: false,
         prompts: [],
         prompt_ids: [],
+        votes: [],
         answers: [],
         points: 0,
         progress: 25,
-        counter: 5
+        counter: 5,
+        pin: ''
     },
 
     actions: {
@@ -59,6 +61,7 @@ export default new Vuex.Store({
             state.prompts = [];
             state.prompt_ids = [];
             state.answers = [];
+            state.votes = [];
             state.prompts_exists = false;
         },
 
@@ -70,6 +73,15 @@ export default new Vuex.Store({
         clear_timer(state) {
             state.progress = 25;
             state.counter = 5;
+        },
+
+        set_pin(state, payload) {
+            state.pin = payload;
+        },
+
+        submit_vote(state, payload) {
+            console.log("voted")
+            state.votes.push(payload);
         },
         
     }

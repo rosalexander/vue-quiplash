@@ -326,7 +326,6 @@ input[type=submit]:hover {
 .card {
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     transition: 0.3s;
-    width: 15%;
     margin: 25px;
     font-size: 35px;
     text-align: center;
@@ -392,11 +391,6 @@ input[type=submit]:hover {
   }
 
   #stamp{
-    height:120%;
-    width:120%;
-    border-radius:5px;
-    font-size: 1px;
-    background-color:#77df7c;
     -webkit-animation-name: pulse;
     animation-name: pulse;
     animation-delay:2.5s;
@@ -408,7 +402,6 @@ input[type=submit]:hover {
      animation-fill-mode:forwards;
      font-family: "Krungthep";
      text-align:center;
-     margin: 10px;
   }
   
   @-webkit-keyframes pulse{

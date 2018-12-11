@@ -1,7 +1,6 @@
 <template>
     <div class="home" style="height:100vh; background:#96C4F9">
         <h1>{{connected}}</h1>
-        <h1>{{hello}}</h1>
         <div class="header">
             NEW GAME
         </div>

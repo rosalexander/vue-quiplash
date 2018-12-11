@@ -1,11 +1,5 @@
  <template>
  <div class="response-body" style="height:100vh; background:#BF2437">
-        <div>
-            {{user_id}}
-            {{username}}
-            {{pin}}
-        </div>
-
         <div class="headerRound">
             ROUND 1
         </div>
@@ -131,7 +125,7 @@
                 var prg = document.getElementById('progress');
                 var counter = this.$store.state.counter;
                 var progress = this.$store.state.progress;
-                var id = setInterval(frame.bind(this), 150);
+                var id = setInterval(frame.bind(this), 300);
 
                 function frame() {
                     // console.log(counter, progress)
@@ -163,6 +157,10 @@
                 this.$store.commit('reset_prompts')
                 this.$store.commit('clear_timer')
             },
+
+            get_responses() {
+                
+            }
 
             
         },

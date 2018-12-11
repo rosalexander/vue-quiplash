@@ -1,42 +1,31 @@
  <template>
  <div class="gen-body" style="height:100vh; background:#96C4F9">
-<div class="headerRound">
+     {{this.$store.state.pin}}
+    <div class="headerRound">
             ROUND 1 RESULTS
+    </div>
+    <div class="question">
+            {{prompts[index]}}
+    </div>
+
+    <hr>
+
+    <div v-if="!voted">
+        <div class="cardRow" v-for="(response, index) in responses" :key="index" >
+            <button class="card" id="stamp"  v-on:click="vote(index)"> {{response.answer}} <p> 100 </p>
+            </button>
         </div>
-        <div class="question">
-            "A bumper sticker a<br>
-            nudist would have"
-        </div>
-        <hr>
+    </div>
+    <div class="question" v-else>
+        <h1>You have submitted your vote!</h1>
+    </div>
 
+    <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+    </div>
 
-        <div class="cardRow">
-        <button class="card"> Choice 1
-        </button>
-
-        <button class="card"> Choice 2
-        </button>
-        </div>
-        
-        <div class="stamp_cl">
-            <div id="stamp">
-                <h1>Player 1</h1>
-            </div>
-
-            <div id="stamp">
-                <h1>Player 2</h1>
-            </div>
-
-            <div id="stamp">
-                <h1>Player 3</h1>
-            </div> 
-
-            <div id="stamp">
-
-                <h1>Player 4</h1>
-            </div>
-        </div>
  </div>
+
 </template>
 
 
@@ -49,18 +38,125 @@
 
         data() {
             return {
-                user: '',
-                hasName: false,
-                message: '',
-                messages: [],
-                members: {},
-                // socket : io('http://' + window.location.hostname + ':3000')
+                user_id : localStorage.getItem('uUID'),
+                socket : io('http://' + window.location.hostname + ':3000'),
+                username: '',
+                members: [],
+                prompts: this.$store.state.prompts,
+                prompt_ids: this.$store.state.prompt_ids,
+                index: this.$store.state.votes.length,
+                answers: this.$store.state.answers,
+                admin: false,
+                pin: this.$store.state.pin,
+                all_responses: [],
+                responses: [],
+                voted: false,
+                show_votes: false
             }
         },
 
+        created() {
+            if (this.user_id == null) {
+                this.user_id = Math.random().toString(24)
+                localStorage.setItem('uUID', this.user_id)
+            } else {
+                this.socket.emit('get_existing_client_connection', this.user_id)
+            }
+
+            this.socket.on('get_username', function(data) {
+                if (data.user_id == this.user_id) {
+                    this.username = data.username
+                    this.addUser();
+                    if (this.username === 'Admin') {
+                        this.admin = true;
+                        this.socket.emit('set_responses', this.pin)
+                    }
+                }
+            }.bind(this))
+
+            this.socket.on('get_responses', function(data) {
+                this.all_responses = data
+                console.log(this.all_responses, "created")
+                console.log(this.all_responses[0], "created")
+                this.get_responses()
+            }.bind(this))
+        },
+
+        mounted() {
+            
+            if(this.index < this.prompts.length) {
+                this.progress()
+            } else {
+                var prg = document.getElementById('progress')
+                prg.style.width = 500 + 'px'
+            }
+
+            console.log(this.index, "index")
+            
+        },
+
         methods: {
-            handleEnter() {
-                this.hasName = true;
+            addUser() {
+                console.log("Adding user to lobby")
+                this.socket.emit('add_user_to_lobby', {
+                    pin: this.pin,
+                    username: this.username,
+                    user_id: this.user_id
+                })
+            },
+
+            get_responses() {
+                this.responses = []
+                let prompt_id = this.prompt_ids[this.index]
+                this.all_responses.forEach((response) => {
+                    if (response.prompt_id == prompt_id) {
+                        this.responses.push(response)
+                        console.log(response)
+                    }
+                })
+            },
+
+            progress() {
+                var prg = document.getElementById('progress');
+                var counter = this.$store.state.counter;
+                var progress = this.$store.state.progress;
+                var id = setInterval(frame.bind(this), 150);
+
+                function frame() {
+                    // console.log(counter, progress)
+                    if(progress >= 500 && counter >= 100) {
+                        this.$store.commit('clear_timer')
+                        
+                        if(this.index < this.prompts.length) {
+                            clearInterval(id)
+                            if (!this.voted) {
+                                this.$store.commit('submit_vote', null)
+                                this.voted = true;
+                            }
+                            this.index += 1
+                            this.voted = false
+                            this.get_responses()
+                            this.progress()
+                        }
+        
+                    }
+                    else {
+                        this.$store.commit('increment_timer')
+                        progress += 5;
+                        counter += 1;
+                        prg.style.width = progress + 'px';
+                    }
+                }
+            },
+
+            vote(index) {
+                this.$store.commit('submit_vote', this.responses[index])
+                this.socket.emit('submit_vote', this.responses[index])
+                this.voted = true;
+            },
+            
+            get_votes() {
+
             }
         }
     }

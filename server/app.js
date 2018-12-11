@@ -294,6 +294,8 @@ io.on('connection', function(socket) {
      */
 
     socket.on('start_game', function(data) {
+        redis.del('prompts_' + data.pin)
+        redis.del('responses_' + data.pin)
         io.emit('start_game', {pin: data.pin});
     });
 
@@ -350,7 +352,22 @@ io.on('connection', function(socket) {
      */
     socket.on('submit_answer', function(data) {
         console.log(data)
-        redis.lpush('response_' + data.pin, JSON.stringify(data))
+        redis.zadd('response_' + data.pin, 1, JSON.stringify(data)).catch((err) => {console.log(err)})
+    }),
+
+    socket.on('set_responses', function(pin) {
+        redis.zrange('response_' + pin, 0, -1).then(function(result) {
+            return result.map(function(x) {
+                return JSON.parse(x);
+            })
+        }).then(function(result) {
+            io.emit('get_responses', result);
+        }).catch((err) => {console.log(err)});
+    }),
+
+    socket.on('submit_vote', function(response) {
+        redis.zincrby('response_' + response.pin, 1, JSON.stringify(response)).catch((err) => {console.log(err)})
+
     })
 
 
