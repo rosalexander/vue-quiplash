@@ -80,7 +80,7 @@
         methods: {
             handleEnter() {
 
-                if (!this.members.includes(this.username)) {
+                if (!this.members.includes(this.username.replace(/^\s+|\s+$/g, ""))) {
                     this.hasName = true
                     this.socket.emit('new_client_connection', {
                         user_id: this.user_id,

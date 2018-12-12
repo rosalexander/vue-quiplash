@@ -64,6 +64,7 @@
                 response: '',
                 admin: false,
                 pin: this.$route.params.id,
+                interval: null
             }
         },
 
@@ -125,13 +126,13 @@
                 var prg = document.getElementById('progress');
                 var counter = this.$store.state.counter;
                 var progress = this.$store.state.progress;
-                var id = setInterval(frame.bind(this), 300);
+                this.interval = setInterval(frame.bind(this), 300);
 
                 function frame() {
                     // console.log(counter, progress)
                     if(progress >= 500 && counter >= 100) {
                         this.$store.commit('clear_timer')
-                        clearInterval(id);
+                        clearInterval(this.interval);
                         router.push({name: 'Results'})
 
                     }
@@ -167,6 +168,7 @@
 
 
         beforeDestroy() {
+            clearInterval(this.interval)
             this.socket.disconnect(true)
         }
     }

@@ -22,7 +22,7 @@
 
     <div v-else-if="show_votes">
         <div class="cardRow" v-for="(response, index) in responses" :key="index" >
-            <button class="card" id="stamp"  v-on:click="vote(index)"> 
+            <button class="card" id="stamp"> 
                 {{response.answer}}
                 <p> By {{response.username}} </p>
                 <p> {{responses_scores[index]}} votes!</p>
@@ -36,9 +36,16 @@
         <h1 v-else>Next vote starting...</h1>
     </div>
 
+    <div class="question" v-if="round_over">
+        <h1>The round has finished</h1>
+        <button type="submit" v-on:click="return_to_lobby"> 
+            Return to Lobby
+        </button>
+    </div>
 
 
-    <div class="progress-bar">
+
+    <div class="progress-bar" v-if="!round_over">
         <div class="progress" id="progress"></div>
     </div>
 
@@ -50,6 +57,7 @@
 <script>
 
     import io from 'socket.io-client'
+    import router from '@/router'
 
     export default {
         name: 'Results',
@@ -71,6 +79,8 @@
                 responses_scores: [],
                 voted: false,
                 show_votes: false,
+                round_over: true,
+                interval: null
             }
         },
 
@@ -106,6 +116,7 @@
         mounted() {
             
             if(this.index < this.prompts.length) {
+                this.round_over = false;
                 this.sleep(3000).then(() => {this.progress()})
             }
 
@@ -147,15 +158,15 @@
                 var prg = document.getElementById('progress');
                 var counter = this.$store.state.counter;
                 var progress = this.$store.state.progress;
-                var id = setInterval(frame.bind(this), 150);
+                this.interval = setInterval(frame.bind(this), 150);
 
                 function frame() {
                     // console.log(counter, progress)
                     if(progress >= 500 && counter >= 100) {
                         this.$store.commit('clear_timer')
                         
-                        if(this.index < this.prompts.length - 1) {
-                            clearInterval(id)
+                        if(this.index < this.prompts.length) {
+                            clearInterval(this.interval)
                             if (!this.voted) {
                                 this.$store.commit('submit_vote', null)
                             }
@@ -178,7 +189,11 @@
                                     this.show_votes = false
 
                                     this.sleep(3000).then(() => {
-                                        this.progress()
+                                        if (this.index < this.prompts.length) {
+                                            this.progress()
+                                        } else {
+                                            this.round_over = true
+                                        }
                                     })
                                 })
                                 
@@ -208,7 +223,23 @@
 
             sleep(ms) {
                 return new Promise(resolve => setTimeout(resolve, ms));
+            },
+
+            return_to_lobby() {
+                router.push({ path: `/lobby/${this.pin}` })
             }
+        },
+
+        watch: {
+            index: function() {
+                if (this.index >= this.prompts.length) {
+                    this.round_over = true
+                }
+            }
+        },
+
+        beforeDestroy() {
+            clearInterval(this.interval)
         }
     }
 </script>
