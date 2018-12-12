@@ -293,22 +293,29 @@ io.on('connection', function(socket) {
      * Start game
      */
 
-    socket.on('start_game', function(data) {
+    socket.on('set_start_game', function(data) {
         console.log("Starting game")
         redis.del('prompts_' + data.pin)
         redis.del('response_' + data.pin)
         console.log('Deleted prompts_' + data.pin + ' and responses_' + data.pin)
-        io.emit('start_game', {pin: data.pin});
+        io.emit('get_start_game', {pin: data.pin});
     });
 
-    socket.on('set_prompts', function (pin) {
+    socket.on('set_prompts', async function (pin) {
         let prompts = [];
         let prompt_ids = new Set();
-        let user_list = get_list_users_in_lobby(pin);
+        let prompts_users = new Set();
+        let user_list = await get_list_users_in_lobby(pin);
+        let admin_index = user_list.indexOf("Admin");
+        if (admin_index > -1) {
+            user_list.splice(admin_index, 1);
+        }
+        
+        Math.floor(Math.random() * user_list.length)
 
         do {
             prompt_ids.add(Math.floor(Math.random() * prompt_data.length));
-        } while (prompt_ids.size < 10)
+        } while (prompt_ids.size < 4)
 
         prompt_ids.forEach((id) => {
             redis.lpush('prompts_' + pin, id)
@@ -316,12 +323,6 @@ io.on('connection', function(socket) {
         })
 
         let prompt_ids_array = [...prompt_ids]
-
-        let prompt_json = prompts.map(function(e, i) {
-            return {prompt: e, prompt_id: prompt_ids_array[i]}
-        })
-
-        // console.log(prompt_json)
 
         io.emit('get_prompts', {pin: pin, prompts: prompts, prompt_ids: prompt_ids_array})
     });

@@ -93,8 +93,7 @@
             },
 
             startGame() {
-                console.log("Start game")
-                this.socket.emit('start_game', {pin: this.pin})
+                this.socket.emit('set_start_game', {pin: this.pin})
             },
 
             rename() {
@@ -179,10 +178,11 @@
 
             }.bind(this))
 
-            this.socket.on('start_game', function() {
+            this.socket.on('get_start_game', function() {
                 router.push({name: 'Response', prams: {id: this.pin}})
                 this.$store.commit('reset_prompts')
                 this.$store.commit('clear_timer')
+                console.log("Start game")
             }.bind(this))
         },
 
