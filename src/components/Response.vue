@@ -1,7 +1,7 @@
  <template>
  <div class="response-body" style="height:100vh; background:#BF2437">
         <div class="headerRound">
-            ROUND 1
+            ANSWER ROUND
         </div>
         <div v-if="!admin">
             <div v-if="this.index < this.prompts.length">
@@ -126,7 +126,7 @@
                 var prg = document.getElementById('progress');
                 var counter = this.$store.state.counter;
                 var progress = this.$store.state.progress;
-                this.interval = setInterval(frame.bind(this), 300);
+                this.interval = setInterval(frame.bind(this), 400);
 
                 function frame() {
                     // console.log(counter, progress)

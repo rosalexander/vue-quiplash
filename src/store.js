@@ -21,7 +21,8 @@ export default new Vuex.Store({
         points: 0,
         progress: 25,
         counter: 5,
-        pin: ''
+        pin: '',
+        members: {}
     },
 
     actions: {
@@ -77,6 +78,25 @@ export default new Vuex.Store({
 
         set_pin(state, payload) {
             state.pin = payload;
+        },
+
+        set_members(state, payload) {
+            console.log(payload, "store")
+            let current_members = {}
+            payload.forEach((member) => {
+                if (!(member in state.members)) {
+                    current_members[member] = 0
+                }
+                else {
+                    current_members[member] = state.members[member]
+                }
+            })
+
+            state.members = current_members
+        },
+
+        add_win(state, payload) {
+            state.members[payload.member] += 1
         },
 
         submit_vote(state, payload) {

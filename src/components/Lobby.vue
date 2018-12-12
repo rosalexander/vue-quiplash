@@ -173,16 +173,20 @@
             this.socket.on('list_users_in_lobby', function(data) {
               if (this.pin == data.pin) {
                 this.members = data.members
+                
                 console.log(this.members)
               }
 
             }.bind(this))
 
-            this.socket.on('get_start_game', function() {
-                router.push({name: 'Response', prams: {id: this.pin}})
-                this.$store.commit('reset_prompts')
-                this.$store.commit('clear_timer')
-                console.log("Start game")
+            this.socket.on('get_start_game', function(data) {
+                if (data.pin == this.pin) {
+                    this.$store.commit('set_members', this.members)
+                    this.$store.commit('reset_prompts')
+                    this.$store.commit('clear_timer')
+                    router.push({name: 'Response', prams: {id: this.pin}})
+                    console.log("Start game")
+                }
             }.bind(this))
         },
 

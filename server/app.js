@@ -377,20 +377,36 @@ io.on('connection', function(socket) {
         
         let get_scores = new Promise((resolve, reject) => {
             let scores = [];
+            let usernames = [];
+            let max = 0;
+            let winners = [];
             data.responses.forEach(async function(response, index, array) {
                 try {
                     let score = await redis.zscore('response_' + data.pin, JSON.stringify(response));
-                    scores.push(score - 1);
+                    score = score - 1
+                    let username = response.username
+                    scores.push(score);
+                    usernames.push(username)
+
+                    if (score >= max) {
+                        if (score == max) {
+                            winners.push(username)
+                        } else {
+                            winners = [username]
+                            score = max
+                        }
+                    }
+
                 } catch (err) {
                     console.log(err);
                 }
-                if (index === array.length - 1) resolve(scores);
+                if (index === array.length - 1) resolve({scores: scores, winners: winners});
             });
 
         });
 
         get_scores.then((scores) => {
-            socket.emit('get_scores', {pin: data.pin, scores: scores})
+            socket.emit('get_scores', {pin: data.pin, scores: scores.scores, winners: scores.winners})
         }) 
     })
 

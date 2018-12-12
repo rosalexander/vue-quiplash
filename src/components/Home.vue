@@ -1,6 +1,7 @@
 <template>
     <div class="home" style="height:100vh; background:#96C4F9">
         <h1>{{connected}}</h1>
+        <h1>{{members}}</h1>
         <div class="header">
             NEW GAME
         </div>
@@ -74,8 +75,8 @@ export default {
             return this.$store.state.username;
         },
 
-        hello () {
-            return this.$store.state.test_state;
+        members () {
+            return this.$store.state.members;
         }
     }
 }

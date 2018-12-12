@@ -1,9 +1,15 @@
  <template>
  <div class="gen-body" style="height:100vh; background:#96C4F9">
      {{this.$store.state.pin}}
-    <div class="headerRound" v-if="!show_votes">
-            ROUND 1 VOTE!
+     {{this.$store.state.members}}
+
+    <div class="headerRound" v-if="round_over">
+        LEADERBOARD
     </div>
+    <div class="headerRound" v-else-if="!show_votes">
+            VOTING ROUND
+    </div>
+    
     <div class="headerRound" v-else>
             AND THE WINNER IS...
     </div>
@@ -23,10 +29,10 @@
     <div v-else-if="show_votes">
         <div class="cardRow" v-for="(response, index) in responses" :key="index" >
             <button class="card" id="stamp"> 
+                <h3 v-if="winners.includes(response.username)">Winner!</h3>
                 {{response.answer}}
                 <p> By {{response.username}} </p>
                 <p> {{responses_scores[index]}} votes!</p>
-                
             </button>
         </div>
     </div>
@@ -37,7 +43,9 @@
     </div>
 
     <div class="question" v-if="round_over">
-        <h1>The round has finished</h1>
+        <div v-for="(member, index) in Object.keys(members)" :key="index">
+            {{member}}: {{members[member]}} wins
+        </div>
         <button type="submit" v-on:click="return_to_lobby"> 
             Return to Lobby
         </button>
@@ -67,7 +75,7 @@
                 user_id : localStorage.getItem('uUID'),
                 socket : io('http://' + window.location.hostname + ':3000'),
                 username: '',
-                members: [],
+                members: this.$store.state.members,
                 prompts: this.$store.state.prompts,
                 prompt_ids: this.$store.state.prompt_ids,
                 index: this.$store.state.votes.length,
@@ -77,6 +85,7 @@
                 all_responses: [],
                 responses: [],
                 responses_scores: [],
+                winners: [],
                 voted: false,
                 show_votes: false,
                 round_over: true,
@@ -114,7 +123,6 @@
         },
 
         mounted() {
-            
             if(this.index < this.prompts.length) {
                 this.round_over = false;
                 this.sleep(3000).then(() => {this.progress()})
@@ -127,7 +135,14 @@
                 console.log(this.pin == data.pin)
                 if (this.pin == data.pin) {
                     this.responses_scores = data.scores
+                    this.winners = data.winners
+                    this.winners.forEach((winner) => {
+                        this.$store.commit('add_win', {member: winner})
+                    })
                 }
+
+                this.members = this.$store.state.members
+                console.log(this.members, "members")
             }.bind(this))
             
         },
@@ -158,7 +173,7 @@
                 var prg = document.getElementById('progress');
                 var counter = this.$store.state.counter;
                 var progress = this.$store.state.progress;
-                this.interval = setInterval(frame.bind(this), 150);
+                this.interval = setInterval(frame.bind(this), 100);
 
                 function frame() {
                     // console.log(counter, progress)
