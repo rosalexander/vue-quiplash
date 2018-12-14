@@ -343,7 +343,8 @@ io.on('connection', function(socket) {
                 let temp_combination = []
                 for (let i = 0; i < 4; i++) {
                     if (temp_user_list.length) {
-                        temp_combination.push(temp_user_list.pop())
+                        let user = temp_user_list.pop()
+                        temp_combination.push(user)
                     }
                 }
                 prompts_users.push(temp_combination)
@@ -354,7 +355,8 @@ io.on('connection', function(socket) {
                 let temp_combination= []
                 for (let i = 0; i < 5; i++) {
                     if (temp_user_list.length) {
-                        temp_combination.push(temp_user_list.pop())
+                        let user = temp_user_list.pop()
+                        temp_combination.push(user)
                     }
                 }
                 prompts_users.push(temp_combination)
@@ -365,7 +367,8 @@ io.on('connection', function(socket) {
                 let temp_combination = []
                 for (let i = 0; i < 6; i++) {
                     if (temp_user_list.length) {
-                        temp_combination.push(temp_user_list.pop())
+                        let user = temp_user_list.pop()
+                        temp_combination.push(user)
                     }
                 }
                 prompts_users.push(temp_combination)
@@ -376,7 +379,8 @@ io.on('connection', function(socket) {
                 let temp_combination = []
                 for (let i = 0; i < 10; i++) {
                     if (temp_user_list.length) {
-                        temp_combination.push(temp_user_list.pop())
+                        let user = temp_user_list.pop()
+                        temp_combination.push(user)
                     }
                 }
                 prompts_users.push(temp_combination)
