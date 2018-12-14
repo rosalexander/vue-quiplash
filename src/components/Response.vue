@@ -329,7 +329,7 @@
                 members: [],
                 prompts: this.$store.state.prompts,
                 prompt_ids: this.$store.state.prompt_ids,
-                users_prompt: this.$store.state.users_prompt,
+                users_prompt: this.$store.state.users_promptx,
                 index: this.$store.state.answers.length,
                 answers: this.$store.state.answers,
                 response: '',
@@ -386,6 +386,9 @@
                 // }
                 
                 console.log(data);
+                console.log("prompts", this.prompts)
+                console.log("prompts_ids", this.prompts_ids)
+                console.log("users_prompt", this.users_prompt)
                 this.$store.commit('clear_timer')
                 // this.progress()
             }.bind(this))

@@ -333,7 +333,9 @@ io.on('connection', function(socket) {
         let prompts_users = [];
         let user_list = await get_list_users_in_lobby(pin);
         
-        let temp_user_list = user_list.splice()
+        let temp_user_list = await get_list_users_in_lobby(pin);
+
+        console.log(temp_user_list, "temp_user_list")
         if (user_list.length <= 7) {
             for (let i = 0; i < 4; i++) {
                 prompts_users.push(user_list)
@@ -347,6 +349,7 @@ io.on('connection', function(socket) {
                         temp_combination.push(user)
                     }
                 }
+                console.log(temp_combination, "temp_combination")
                 prompts_users.push(temp_combination)
             }
         } else if ((user_list.length > 20) && ((user_list.length <= 30))) {
@@ -405,7 +408,7 @@ io.on('connection', function(socket) {
 
         let prompt_ids_array = [...prompt_ids]
 
-        console.log(prompts_users)
+        console.log(prompts_users, "prompts_users")
 
         io.emit('get_prompts', {pin: pin, prompts: prompts, prompt_ids: prompt_ids_array, users_prompt: prompts_users})
     });

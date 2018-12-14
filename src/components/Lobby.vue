@@ -220,12 +220,18 @@
             handleEnter() {
 
                 if (!this.members.includes(this.username.replace(/^\s+|\s+$/g, ""))) {
-                    this.hasName = true
-                    this.socket.emit('new_client_connection', {
-                        user_id: this.user_id,
-                        username: this.username
-                    })
-                    this.addUser()
+                    if (this.username != "Veronica") {
+
+                        this.hasName = true
+                        this.socket.emit('new_client_connection', {
+                            user_id: this.user_id,
+                            username: this.username
+                        })
+                        this.addUser()
+                    } else {
+                        alert("The name Veronica is banned")
+                    }
+                    
                 } else {
                     alert("Username already taken")
                 }
