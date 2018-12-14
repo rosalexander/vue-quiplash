@@ -90,6 +90,32 @@ async function get_prompt(pin, prompt_id) {
     return prompt;
 };
 
+function get_combinations_helper(arr, index, i, pair, k, ref) {
+    if (k > arr.length) {
+        return;
+    }
+    
+    if (index == k) {
+      ref.add(pair.slice())
+      return;
+    }
+  
+    else if (i >= arr.length) {
+      return;
+    }
+  
+    pair[index] = arr[i];
+    get_combinations_helper(arr, index+1, i+1, pair, k, ref);
+    get_combinations_helper(arr, index, i+1, pair, k, ref);
+}
+  
+function get_combinations(arr, k) {
+    var combinations = new Set()
+    var test = 'hello'
+    get_combinations_helper(arr, 0, 0, new Array(k).fill(0), k, combinations);
+    return combinations
+}
+
 io.on('connection', function(socket) {
     console.log("Socket ID: " + socket.id)
 
@@ -304,9 +330,60 @@ io.on('connection', function(socket) {
     socket.on('set_prompts', async function (pin) {
         let prompts = [];
         let prompt_ids = new Set();
-        let prompts_users = new Set();
+        let prompts_users = [];
         let user_list = await get_list_users_in_lobby(pin);
+        
+        let temp_user_list = user_list.splice()
+        if (user_list.length <= 7) {
+            for (let i = 0; i < 4; i++) {
+                prompts_users.push(user_list)
+            }
+        } else if ((user_list.length > 8) && ((user_list.length <= 20))) {
+            while (temp_user_list.length) {
+                let temp_combination = []
+                for (let i = 0; i < 4; i++) {
+                    if (temp_user_list.length) {
+                        temp_combination.push(temp_user_list.pop())
+                    }
+                }
+                prompts_users.push(temp_combination)
+            }
+        } else if ((user_list.length > 20) && ((user_list.length <= 30))) {
+            //divide by 5
+            while (temp_user_list.length) {
+                let temp_combination= []
+                for (let i = 0; i < 5; i++) {
+                    if (temp_user_list.length) {
+                        temp_combination.push(temp_user_list.pop())
+                    }
+                }
+                prompts_users.push(temp_combination)
+            }
+        } else if ((user_list.length > 30) && ((user_list.length <= 48))) {
+            //divide by 6
+            while (temp_user_list.length) {
+                let temp_combination = []
+                for (let i = 0; i < 6; i++) {
+                    if (temp_user_list.length) {
+                        temp_combination.push(temp_user_list.pop())
+                    }
+                }
+                prompts_users.push(temp_combination)
+            }
+        } else {
+            //divide by 10
+            while (temp_user_list.length) {
+                let temp_combination = []
+                for (let i = 0; i < 10; i++) {
+                    if (temp_user_list.length) {
+                        temp_combination.push(temp_user_list.pop())
+                    }
+                }
+                prompts_users.push(temp_combination)
+            }
+        }
         let admin_index = user_list.indexOf("Admin");
+        let user_prompt = [];
         if (admin_index > -1) {
             user_list.splice(admin_index, 1);
         }
@@ -315,7 +392,7 @@ io.on('connection', function(socket) {
 
         do {
             prompt_ids.add(Math.floor(Math.random() * prompt_data.length));
-        } while (prompt_ids.size < 4)
+        } while (prompt_ids.size < prompts_users.length)
 
         prompt_ids.forEach((id) => {
             redis.lpush('prompts_' + pin, id)
@@ -324,7 +401,7 @@ io.on('connection', function(socket) {
 
         let prompt_ids_array = [...prompt_ids]
 
-        io.emit('get_prompts', {pin: pin, prompts: prompts, prompt_ids: prompt_ids_array})
+        io.emit('get_prompts', {pin: pin, prompts: prompts, prompt_ids: prompt_ids_array, users_prompt: prompts_users})
     });
 
     socket.on('set_prompt', function(data) {

@@ -301,7 +301,7 @@
         box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
         transition: 0.3s;
         margin: 25px;
-        font-size: 20px;
+        font-size: 15px;
         text-align: center;
         font-family: "Krungthep";
         background-color: rgb(255, 255, 255);
@@ -387,69 +387,42 @@
       color: rgba(242, 203, 11, 0.989);
   }
   
-  @-webkit-keyframes pulse{
-    0%{
-      opacity: 0;
+        @-webkit-keyframes pulse{
+            0%{
+            opacity: 0;
+            }
+            10%{
+            opacity:.50;
+            transform-origin: 50% 50%;
+            transform: rotate(-2deg) scale(5);
+            transition: all .3s cubic-bezier(0.6, 0.04, 0.98, 0.335);
+            }
+            100%{
+            opacity:1;
+            /* transform: rotate(-15deg) scale(1); */
+            }
+        }
+
+        .progress-bar {
+            width: 206px;
+            height: 20px;
+            background-color: antiquewhite;
+            border-radius: 15px;
+            /* margin: auto;
+            margin-top: 5%;
+            margin-bottom: 5%; */
+            margin-bottom: 10px;
+            padding: 3px;  
+        }
+
+        .progress {
+            width: 10px;
+            height: 20px;
+            background-color: #77df7c;
+            border-radius: 15px;
+            padding: 5px;
+        }
     }
-    10%{
-      opacity:.50;
-      transform-origin: 50% 50%;
-      transform: rotate(-2deg) scale(5);
-      transition: all .3s cubic-bezier(0.6, 0.04, 0.98, 0.335);
-    }
-    100%{
-      opacity:1;
-      /* transform: rotate(-15deg) scale(1); */
-    }
-  }
-
-      .progress-bar {
-        width: 200px;
-        height: 20px;
-        background-color: antiquewhite;
-        border-radius: 15px;
-        /* margin: auto;
-        margin-top: 5%;
-        margin-bottom: 5%; */
-        margin-bottom: 10px;
-        padding: 3px;  
-    }
-
-    .progress {
-        width: 10px;
-        height: 20px;
-        background-color: #77df7c;
-        border-radius: 15px;
-        padding: 5px;
-    }
-
-
-
-
-
-
-
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
  </style>
  
  
@@ -457,8 +430,8 @@
  
  <div class="home">
      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
-     {{this.$store.state.pin}}
-     {{this.$store.state.members}}
+     <!-- {{this.$store.state.pin}}
+     {{this.$store.state.members}} -->
 
     <div class="headerRound" v-if="round_over">
         LEADERBOARD
@@ -489,6 +462,7 @@
                 <div v-if="winners.includes(response.username)">
                     <button class="card2" id="stamp2" style="background-color:#77df7c;">
                         <i class="fas fa-crown"></i>
+                        <br>
                         {{response.answer}}
                         <div><hr style="align: center; width: 60%;"></div>
                         <span style="color: red"><p> {{response.username}} </p></span>
@@ -559,11 +533,19 @@
                 voted: false,
                 show_votes: false,
                 round_over: true,
-                interval: null
+                interval: null,
+                window: {
+                    width: 0,
+                    height: 0
+                }
             }
         },
 
         created() {
+
+            window.addEventListener('resize', this.handleResize)
+            this.handleResize();
+
             if (this.user_id == null) {
                 this.user_id = Math.random().toString(24)
                 localStorage.setItem('uUID', this.user_id)
@@ -640,14 +622,22 @@
             },
 
             progress() {
+                var increment = 5;
+                var limit = 500;
+
+                if (this.window.width <= 812) {
+                    increment = 2;
+                    limit = 200;
+                }
+
                 var prg = document.getElementById('progress');
                 var counter = this.$store.state.counter;
                 var progress = this.$store.state.progress;
-                this.interval = setInterval(frame.bind(this), 50);
+                this.interval = setInterval(frame.bind(this), 100);
 
                 function frame() {
                     // console.log(counter, progress)
-                    if(progress >= 500 && counter >= 100) {
+                    if(progress >= limit && counter >= 100) {
                         this.$store.commit('clear_timer')
                         
                         if(this.index < this.prompts.length) {
@@ -664,8 +654,7 @@
                                 this.set_scores(this.responses)
                                 
                             })
-                            this.sleep(10000000).then(() => {
-                                this.show_votes = false
+                            this.sleep(10000).then(() => {
 
                                 this.sleep(1000).then(() => {
                                     this.voted = false
@@ -687,8 +676,8 @@
         
                     }
                     else {
-                        this.$store.commit('increment_timer')
-                        progress += 5;
+                        this.$store.commit('increment_timer', increment)
+                        progress += increment;
                         counter += 1;
                         prg.style.width = progress + 'px';
                     }
@@ -712,6 +701,11 @@
 
             return_to_lobby() {
                 router.push({ path: `/lobby/${this.pin}` })
+            },
+
+            handleResize() {
+                this.window.width = window.innerWidth;
+                this.window.height = window.innerHeight;
             }
         },
 
@@ -725,6 +719,12 @@
 
         beforeDestroy() {
             clearInterval(this.interval)
+        },
+
+        destroyed() {
+            clearInterval(this.interval)
+            window.removeEventListener('resize', this.handleResize)
+            
         }
     }
 </script>

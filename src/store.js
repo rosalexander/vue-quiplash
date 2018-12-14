@@ -16,11 +16,12 @@ export default new Vuex.Store({
         prompts_exists: false,
         prompts: [],
         prompt_ids: [],
+        users_prompt: [],
         votes: [],
         answers: [],
         points: 0,
-        progress: 25,
-        counter: 5,
+        progress: 0,
+        counter: 0,
         pin: '',
         members: {}
     },
@@ -51,6 +52,7 @@ export default new Vuex.Store({
         set_prompts(state, payload) {
             state.prompts = payload.prompts;
             state.prompt_ids = payload.prompt_ids;
+            state.users_prompt = payload.users_prompt;
             state.prompts_exists = true;
         },
         
@@ -61,19 +63,24 @@ export default new Vuex.Store({
         reset_prompts(state) {
             state.prompts = [];
             state.prompt_ids = [];
+            state.users_prompt;
             state.answers = [];
             state.votes = [];
             state.prompts_exists = false;
         },
 
-        increment_timer(state) {
-            state.progress += 5;
+        increment_timer(state, payload) {
+            state.progress += parseInt(payload);
             state.counter += 1;
         },
 
+        // modify_progress(state, payload) {
+        //     state.progress = parseInt(payload);
+        // },
+
         clear_timer(state) {
-            state.progress = 25;
-            state.counter = 5;
+            state.progress = 0;
+            state.counter = 0;
         },
 
         set_pin(state, payload) {

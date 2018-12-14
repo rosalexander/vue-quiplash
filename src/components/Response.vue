@@ -241,7 +241,7 @@
     }
 
     .progress-bar {
-        width: 200px;
+        width: 206px;
         height: 20px;
         background-color: antiquewhite;
         border-radius: 15px;
@@ -253,7 +253,7 @@
     }
 
     .progress {
-        width: 10px;
+        width: 0px;
         height: 20px;
         background-color: #77df7c;
         border-radius: 15px;
@@ -329,16 +329,25 @@
                 members: [],
                 prompts: this.$store.state.prompts,
                 prompt_ids: this.$store.state.prompt_ids,
+                users_prompt: this.$store.state.users_prompt,
                 index: this.$store.state.answers.length,
                 answers: this.$store.state.answers,
                 response: '',
                 admin: false,
                 pin: this.$route.params.id,
-                interval: null
+                interval: null,
+                window: {
+                    width: 0,
+                    height: 0
+                }
             }
         },
 
         created() {
+
+            window.addEventListener('resize', this.handleResize)
+            this.handleResize();
+
             if (this.user_id == null) {
                 this.user_id = Math.random().toString(24)
                 localStorage.setItem('uUID', this.user_id)
@@ -363,9 +372,20 @@
         mounted() {
             this.socket.on('get_prompts', function(data) {       
                 this.$store.commit('set_prompts', data)
-                this.prompts = data.prompts;
-                this.prompt_ids = data.prompt_ids;
-                console.log(this.prompts);
+                for (let i = 0; i < data.prompts.length; i++) {
+                    if (data.users_prompt[i].includes(this.username)) {
+                        this.prompts.push(data.prompts[i])
+                        this.prompt_ids.push(data.prompt_ids[i])
+                        this.users_prompt.push(data.users_prompt[i])
+                    }
+                }
+                // if (this.admin) {
+                //     this.prompts = data.prompts;
+                //     this.prompt_ids = data.prompt_ids;
+                //     this.users_prompt = data.users_prompt;
+                // }
+                
+                console.log(data);
                 this.$store.commit('clear_timer')
                 // this.progress()
             }.bind(this))
@@ -393,6 +413,12 @@
             },
 
             progress() {
+                var increment = 5;
+                var limit = 500;
+                if (this.window.width <= 812) {
+                    increment = 2;
+                    limit = 200;
+                }
                 var prg = document.getElementById('progress');
                 var counter = this.$store.state.counter;
                 var progress = this.$store.state.progress;
@@ -400,15 +426,15 @@
 
                 function frame() {
                     // console.log(counter, progress)
-                    if(progress >= 500 && counter >= 100) {
+                    if(progress >= limit && counter >= 100) {
                         this.$store.commit('clear_timer')
                         clearInterval(this.interval);
                         router.push({name: 'Results'})
 
                     }
                     else {
-                        this.$store.commit('increment_timer')
-                        progress += 5;
+                        this.$store.commit('increment_timer', increment)
+                        progress += increment;
                         counter += 1;
                         prg.style.width = progress + 'px';
                     }
@@ -431,6 +457,11 @@
 
             get_responses() {
                 
+            },
+
+            handleResize() {
+                this.window.width = window.innerWidth;
+                this.window.height = window.innerHeight;
             }
 
             
@@ -440,6 +471,11 @@
         beforeDestroy() {
             clearInterval(this.interval)
             this.socket.disconnect(true)
+        },
+
+        destroyed() {
+            window.removeEventListener('resize', this.handleResize)
+            clearInterval(this.interval)
         }
     }
 </script>
