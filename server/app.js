@@ -482,7 +482,8 @@ io.on('connection', function(socket) {
                         if (score == max) {
                             winners.push(username)
                         } else {
-                            winners = [username]
+                            winners = []
+                            winners.push(username)
                             score = max
                         }
                     }
