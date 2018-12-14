@@ -1,56 +1,195 @@
+<style scoped>
+    ul {
+        margin-right: 3pc;
+        text-align: center;
+        /* list-style: inside; */
+        color: rgb(245, 60, 57);
+    }
+
+    .home {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        background-color: #96C4F9;
+    }
+
+    .header {
+        font-family: "Krungthep";
+        font-size: 50px;
+        text-align: center;
+        background-color: #96C4F9;
+    }    
+
+    h2 {
+        padding: 20px;
+    }
+
+    .roundInput {
+        font-family: "Krungthep";
+        text-align: center;
+        background-color: #96C4F9;
+    }
+    #roundInput {
+        font-family: "Krungthep";
+        font-size: 20px;
+        text-align: center;
+        width: 90px;
+        margin-top: 3%;
+        margin-bottom: 4%;
+    }
+
+    .waitingMessage {
+        font-family: "Krungthep";
+        font-size: 40px;
+        text-align: center;
+        padding: 10px;
+        background-color: #96C4F9;
+    }
+
+    #lobbyCreate {
+        font-size: 20px;
+        background-color: #0CC40E;
+        color: black;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    #lobbyCreate:hover {
+        background-color: #77df7c;
+        color: white;
+        transition: 0.5s;
+        
+    }
+    .btnPin {
+        width: 10%;
+        font-size: 20px;
+        text-align: center;
+        font-family: "Krungthep";
+        background-color: #F5A623;
+        color: black;
+        padding: 13px;
+        margin: 50px;
+        border: none;
+        border-radius: 4px; 
+    }
+    @media screen and (max-width: 812px) {
+        ul {
+                margin-right: 3pc;
+                text-align: center;
+                /* list-style: inside; */
+                color: rgb(245, 60, 57);
+            }
+
+        .home {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            background-color: #96C4F9;
+        }
+
+        .header {
+            font-family: "Krungthep";
+            font-size: 40px;
+            text-align: center;
+            background-color: #96C4F9;
+        }    
+
+        h2 {
+            font-size: 20px;
+            padding: 20px;
+        }
+
+        .roundInput {
+            font-family: "Krungthep";
+            text-align: center;
+            background-color: #96C4F9;
+        }
+        #roundInput {
+            font-family: "Krungthep";
+            font-size: 20px;
+            text-align: center;
+            width: 90px;
+            margin-top: 3%;
+            margin-bottom: 4%;
+        }
+
+        .waitingMessage {
+            font-family: "Krungthep";
+            font-size: 20px;
+            text-align: center;
+            background-color: #96C4F9;
+        }
+
+        #lobbyCreate {
+            width: 150px;
+            font-size: 15px;
+            background-color: #0CC40E;
+            color: black;
+            padding: 13px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        
+        }
+
+        #lobbyCreate:hover {
+            background-color: #77df7c;
+            color: white;
+            transition: 0.5s;
+            
+        }
+        .btnPin {
+            width: 200px;
+            font-size: 20px;
+            text-align: center;
+            font-family: "Krungthep";
+            background-color: #F5A623;
+            color: black;
+            padding: 13px;
+            margin: 50px;
+            border: none;
+            border-radius: 4px; 
+        }
+    }   
+</style>
+
 <template>
-    <div class="gen-body" style="height:100vh; background:#96C4F9">
+    <div class="home">
         <div class="header">
             LOBBY
             <br>
             <button class="btnPin">PIN: {{pin}} </button>
-
-            <div v-if="admin">
-                <h2>You are the admin. Your screen will be used to display the game. Admins will not play the game.</h2>
-            </div>
-        </div>
-
-        
-        
-        <div class="waitingMessage">
-
-            Members
-
-            <br>
-
-            <ul v-for="member in members" :key="member">
-                    {{ member }}
-            </ul>
-
-            Waiting for more players to join...
-        </div>
-
-        
-
-        <div class="roundInput" style="height:100vh; background:#96C4F9">
             <div v-if="!hasName">
                 <form @submit.prevent="handleEnter">
-                    <input type="text" id="roundInput" v-model="username" required min="4"><br>
+                    <input type="text" autocomplete = "off" id="roundInput" v-model="username" required min="4"><br>
                     <button type="submit" id="lobbyCreate">ENTER NAME</button>
                 </form>
                 <br>
             </div>
-
-            <!-- <div v-else>
-                <h1>{{username}}</h1>
-                <h1>{{user_id}}</h1>
-            </div> -->
             <div v-else>
                 <form @submit.prevent="rename">
-                    <input type="submit" value="RENAME">
+                    <input type="submit" id="lobbyCreate" value="RENAME">
                 </form>
-                <br>
+                <form @submit.prevent="startGame" v-if="admin">
+                    <input type="submit" id="lobbyCreate" value="START GAME">
+                </form>
             </div>
 
-            <form @submit.prevent="startGame" v-if="admin">
-                <input type="submit" value="START GAME">
-            </form>
-        </div> 
+            <div v-if="admin">
+                <h2>You are the <span style="color: yellow;">Admin</span>. Your screen will be used to display the game. Admins will not play the game.</h2>
+            </div>
+        </div>
+        <div class="waitingMessage">
+            Members
+            <br>
+            <ul v-for="member in members" :key="member">
+                   <span style="color: yellow;" v-if="member == 'Admin'"> {{ member }}</span>
+                   <span style="color: red;" v-else> {{ member }}</span>
+            </ul>
+            Waiting for more players to join...
+        </div>
+
     </div>
 </template>
 
@@ -207,10 +346,4 @@
     }
 </script>
 
-<style>
-    ul {
-        margin-right:2pc;
-        text-align: center;
-        list-style: inside;
-    }
-</style>
+

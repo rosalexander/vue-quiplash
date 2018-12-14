@@ -19,14 +19,6 @@ export default {
 
 
 <style>
-
-.gen-body {
-    background: #96C4F9;
-    height: 100vh;
-    width: 100vw;
-
-}
-
 hr {
     width: 25%;
     border: 1;
@@ -39,7 +31,6 @@ input {
     font-family: "Krungthep";
     font-size: 50px;
     text-align: center;
-    padding: 25px;
 }
 
 .headerRound {
@@ -55,7 +46,6 @@ input {
     font-size: 40px;
     text-align: center;
     padding: 10px;
-    margin-top: 20%;
 }
 
 .roundMessage {
@@ -72,27 +62,7 @@ input {
     padding-bottom: 2%;
 }
 
-.title {
-    font-family: "Krungthep";
-    font-size: 30px;
-    text-align: center;
-    margin-top: 10%;
-}
-
-.roundInput {
-    text-align: center;
-    padding: 15px;
-}
-#roundInput {
-    font-family: "Krungthep";
-    font-size: 20px;
-    text-align: center;
-    width: 90px;
-    margin-top: 1%;
-}
-
 #lobbyCreate {
-    width: 10%;
     font-size: 20px;
     background-color: #0CC40E;
     color: black;
@@ -100,12 +70,14 @@ input {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    margin-top: 4%;
+    
 }
 
 #lobbyCreate:hover {
     background-color: #77df7c;
     color: white;
+    transition: 0.5s;
+    
 }
 
 input[type=submit] {
@@ -134,8 +106,13 @@ input[type=submit]:hover {
     padding: 13px;
     margin: 50px;
     border: none;
-    border-radius: 4px;
-    
+    border-radius: 4px; 
+}
+
+.btnPin:hover {
+    background-color: #77df7c;
+    color: white;
+    transition: 0.5s;
 }
 
 /* The snackbar - position it at the bottom and in the middle of the screen */
@@ -186,144 +163,12 @@ input[type=submit]:hover {
     to {bottom: 0; opacity: 0;}
 }
 
-/* body{ 
-	font: normal 13px/20px Arial, Helvetica, sans-serif; word-wrap:break-word;
-	color: #eee;
-	background: #353535;
-} */
-
-#countdown{
-	width: 200px;
-	height: 112px;
-    text-align: center;
-    font-family: "Krungthep";
-	background: #222;
-	background-image: -webkit-linear-gradient(top, #222, #333, #333, #222); 
-	background-image:    -moz-linear-gradient(top, #222, #333, #333, #222);
-	background-image:     -ms-linear-gradient(top, #222, #333, #333, #222);
-	background-image:      -o-linear-gradient(top, #222, #333, #333, #222);
-	border: 1px solid #111;
-	border-radius: 5px;
-	box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.6);
-	margin: auto;
-	padding: 24px 0;
-	position: absolute;
-    top: 0; bottom: 0; left: 0; right: 0;
-}
-
-#countdown:before{
-	content:"";
-	width: 8px;
-    height: 65px;
-    font-family: "Krungthep";
-	background: #444;
-	background-image: -webkit-linear-gradient(top, #555, #444, #444, #555); 
-	background-image:    -moz-linear-gradient(top, #555, #444, #444, #555);
-	background-image:     -ms-linear-gradient(top, #555, #444, #444, #555);
-	background-image:      -o-linear-gradient(top, #555, #444, #444, #555);
-	border: 1px solid #111;
-	border-top-left-radius: 6px;
-	border-bottom-left-radius: 6px;
-	display: block;
-	position: absolute;
-	top: 48px; left: -10px;
-}
-
-#countdown:after{
-	content:"";
-	width: 8px;
-    height: 65px;
-    font-family: "Krungthep";
-	background: #444;
-	background-image: -webkit-linear-gradient(top, #555, #444, #444, #555); 
-	background-image:    -moz-linear-gradient(top, #555, #444, #444, #555);
-	background-image:     -ms-linear-gradient(top, #555, #444, #444, #555);
-	background-image:      -o-linear-gradient(top, #555, #444, #444, #555);
-	border: 1px solid #111;
-	border-top-right-radius: 6px;
-	border-bottom-right-radius: 6px;
-	display: block;
-	position: absolute;
-	top: 48px; right: -10px;
-}
-
-#countdown #tiles{
-    font-family: "Krungthep";
-	position: relative;
-	z-index: 1;
-}
-
-#countdown #tiles > span{
-	width: 92px;
-    max-width: 92px;
-	font: bold 48px 'Droid Sans', "Krungthep", sans-serif;
-	text-align: center;
-	color: #111;
-	background-color: #ddd;
-	background-image: -webkit-linear-gradient(top, #bbb, #eee); 
-	background-image:    -moz-linear-gradient(top, #bbb, #eee);
-	background-image:     -ms-linear-gradient(top, #bbb, #eee);
-	background-image:      -o-linear-gradient(top, #bbb, #eee);
-	border-top: 1px solid #fff;
-	border-radius: 3px;
-	box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.7);
-	margin: 0 7px;
-	padding: 18px 0;
-	display: inline-block;
-	position: relative;
-}
-
 .li {
     font-family: "Krungthep";
 }
 
-#countdown #tiles > span:before{
-	content:"";
-	width: 100%;
-    height: 13px;
-    font-family: "Krungthep";
-	background: #111;
-	display: block;
-	padding: 0 3px;
-	position: absolute;
-	top: 41%; left: -3px;
-	z-index: -1;
-}
 
-#countdown #tiles > span:after{
-	content:"";
-	width: 100%;
-	height: 1px;
-    background: #eee;
-    font-family: "Krungthep";
-	border-top: 1px solid #333;
-	display: block;
-	position: absolute;
-	top: 48%; left: 0;
-}
-
-#countdown .labels{
-    font-family: "Krungthep";
-	width: 100%;
-	height: 25px;
-	text-align: center;
-	position: absolute;
-    bottom: 8px;
-    
-}
-
-#countdown .labels li{
-    font-family: "Krungthep";
-	width: 102px;
-	font: bold 15px 'Droid Sans', Arial, sans-serif;
-	color: #f47321;
-	text-shadow: 1px 1px 0px #000;
-	text-align: center;
-	text-transform: uppercase;
-	display: inline-block;
-}
-
-.card {
+/* .card {
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     transition: 0.3s;
     margin: 25px;
@@ -348,52 +193,13 @@ input[type=submit]:hover {
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
     background-color: #77df7c;
     color: white;
-}
+} */
 
-
-.player1 {
-    color: #0CC40E;
-    font-family: "Krungthep";
-    text-align: center;
-    overflow: hidden; /* Ensures the content is not revealed until the animation */
-    border-right: .15em solid orange; /* The typwriter cursor */
-    white-space: nowrap; /* Keeps the content on a single line */
-    letter-spacing: .15em; /* Adjust as needed */
-    animation: 
-      typing 2.5s steps(30, end),
-      blink-caret .5s step-end infinite;
-  }
-
-  .player2 {
-    color: black;
-    font-family: "Krungthep";
-    text-align: center;
-    overflow: hidden; /* Ensures the content is not revealed until the animation */
-    border-right: .15em solid orange; /* The typwriter cursor */
-    white-space: nowrap; /* Keeps the content on a single line */
-    letter-spacing: .15em; /* Adjust as needed */
-    animation: 
-      typing 2s steps(30, end),
-      blink-caret .5s step-end infinite;
-  }
-  
-  /* The typing effect */
-  @keyframes typing {
-    from { width: 0 }
-    to { width: 100% }
-  }
-
-  
-  /* The typewriter cursor effect */
-  @keyframes blink-caret1 {
-    from, to { border-color: transparent }
-    50% { border-color: orange }
-  }
 
   #stamp{
     -webkit-animation-name: pulse;
     animation-name: pulse;
-    animation-delay:2.5s;
+    animation-delay:1.5s;
     -webkit-animation-delay:2.5s;
     -webkit-animation-duration: 0.5s;
     animation-duration: 0.5s;
@@ -402,6 +208,7 @@ input[type=submit]:hover {
      animation-fill-mode:forwards;
      font-family: "Krungthep";
      text-align:center;
+     
   }
   
   @-webkit-keyframes pulse{
@@ -411,31 +218,19 @@ input[type=submit]:hover {
     10%{
       opacity:.50;
       transform-origin: 50% 50%;
-      transform: rotate(-2deg) scale(5);
+      /* transform: rotate(-2deg) scale(5); */
       transition: all .3s cubic-bezier(0.6, 0.04, 0.98, 0.335);
     }
     100%{
       opacity:1;
-      transform: rotate(-15deg) scale(1);
+      /* transform: rotate(-15deg) scale(1); */
     }
   }
 
-  .stamp_cl {
-    height:200%;
-    width: 40%;
-    margin:auto;
-    padding:20px;
+  /* .cardRow {
     display: flex;
     justify-content: center;
-    /* position: relative; */
-    /* border: 5px solid black; */
-
-  }
-
-  .cardRow {
-    display: flex;
-    justify-content: center;
-  }
+  } */
 
 
 .progress-bar {
@@ -445,6 +240,7 @@ input[type=submit]:hover {
     border-radius: 15px;
     margin: auto;
     margin-top: 5%;
+    margin-bottom: 5%;
     padding: 3px;
 }
 

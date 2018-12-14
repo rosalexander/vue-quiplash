@@ -1,5 +1,271 @@
- <template>
- <div class="response-body" style="height:100vh; background:#BF2437">
+ <style scoped>
+    body {
+        background-color: #BF2437;
+    }
+
+    form {
+        background-color: #BF2437;
+    }
+    .home {
+        height: 110%;
+        width: 100%;
+        position: absolute;
+        background-color: #BF2437;
+    }
+    .question {
+        font-family: "Krungthep";
+        font-size: 40px;
+        text-align: center;
+        padding-bottom: 2%;
+        padding: 15px;
+        color: white;
+        background-color: #BF2437;
+    }
+
+    .headerRound {
+        font-family: "Krungthep";
+        font-size: 50px;
+        text-align: center;
+        padding: 25px;
+        color:white;
+        background-color: #BF2437;
+    }
+
+    hr {
+        border: 2px solid white;
+    }
+
+    .headerRound {
+        font-family: "Krungthep";
+        font-size: 50px;
+        text-align: center;
+        padding: 25px;
+        color:white;
+    }
+
+    .btnPin {
+        width: 10%;
+        font-size: 20px;
+        text-align: center;
+        font-family: "Krungthep";
+        background-color: #F5A623;
+        color: black;
+        padding: 13px;
+        border: none;
+        border-radius: 4px;
+        display: flex;
+        justify-content: center;
+        margin: auto;
+        cursor: pointer;
+    }
+
+    #response {
+        background-color: black;
+        color:white;
+        font-family: "Krungthep";
+        height: 50%;
+        margin-top:20%;
+
+    }
+    textarea::-webkit-input-placeholder {
+        color: white;
+        font-family: "Krungthep";
+    }
+
+    .cardRow {
+        display: flex;
+        justify-content: center;
+        background-color: #BF2437; 
+    }
+
+    .card {
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        transition: 0.3s;
+        margin: 25px;
+        font-size: 35px;
+        text-align: center;
+        font-family: "Krungthep";
+        background-color: rgb(255, 255, 255);
+        color: black;
+        padding: 3%;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        background-color: #BF2437;
+    }
+
+    .card:hover {
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+        background-color: #77df7c;
+        color: white;
+    }
+
+    .card:focus {
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+        background-color: #77df7c;
+        color: white;
+    }
+
+    .progress-bar {
+        width: 506px;
+        height: 25px;
+        background-color: antiquewhite;
+        border-radius: 15px;
+        /* margin: auto;
+        margin-top: 5%;
+        margin-bottom: 5%; */
+        padding: 3px;     
+    }
+
+    .progress {
+        width: 10px;
+        height: 20px;
+        background-color: #77df7c;
+        border-radius: 15px;
+        padding: 5px;
+    }
+
+    .test {
+        background-color: #BF2437;
+    }
+@media screen and (max-width: 812px) {
+        body {
+        background-color: #BF2437;
+    }
+    .home {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        background-color: #BF2437;
+    }
+    .question {
+        font-family: "Krungthep";
+        font-size: 30px;
+        text-align: center;
+        padding-bottom: 2%;
+        color: white;
+        background-color: #BF2437;
+    }
+
+    .headerRound {
+        font-family: "Krungthep";
+        font-size: 50px;
+        text-align: center;
+        padding: 25px;
+        color:white;
+        background-color: #BF2437;
+    }
+
+    hr {
+        border: 2px solid white;
+    }
+
+    .headerRound {
+        font-family: "Krungthep";
+        font-size: 30px;
+        text-align: center;
+        padding: 25px;
+        color:white;
+    }
+
+    .question {
+        font-family: "Krungthep";
+        font-size: 25px;
+        text-align: center;
+        padding: 10px;
+        background-color: #BF2437;
+    }
+
+    .btnPin {
+        width: 40%;
+        font-size: 20px;
+        text-align: center;
+        font-family: "Krungthep";
+        background-color: #F5A623;
+        color: black;
+        padding: 13px;
+        border: none;
+        border-radius: 4px;
+        display: flex;
+        justify-content: center;
+        margin: auto;
+        cursor: pointer;
+        
+    }
+
+    #response {
+        background-color: black;
+        color:white;
+        font-family: "Krungthep";
+        height: 50%;
+        margin-top:20%;
+
+    }
+    textarea::-webkit-input-placeholder {
+        color: white;
+        font-family: "Krungthep";
+    }
+
+    .cardRow {
+        display: flex;
+        justify-content: center;
+        background-color: #BF2437; 
+    }
+
+    .card {
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        transition: 0.3s;
+        margin: 25px;
+        font-size: 35px;
+        text-align: center;
+        font-family: "Krungthep";
+        background-color: rgb(255, 255, 255);
+        color: black;
+        padding: 3%;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        background-color: #BF2437;
+    }
+
+    .card:hover {
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+        background-color: #77df7c;
+        color: white;
+    }
+
+    .card:focus {
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+        background-color: #77df7c;
+        color: white;
+    }
+
+    .progress-bar {
+        width: 200px;
+        height: 20px;
+        background-color: antiquewhite;
+        border-radius: 15px;
+        /* margin: auto;
+        margin-top: 5%;
+        margin-bottom: 5%; */
+        margin-bottom: 10px;
+        padding: 3px;  
+    }
+
+    .progress {
+        width: 10px;
+        height: 20px;
+        background-color: #77df7c;
+        border-radius: 15px;
+        padding: 5px;
+    }
+
+
+}
+</style>
+
+<template>
+    <div class="home">
         <div class="headerRound">
             ANSWER ROUND
         </div>
@@ -18,6 +284,8 @@
                 <form @submit.prevent="submit" >
                     <input type="submit" class="btnPin" value="Submit">
                 </form>
+
+
             </div>
                 
             <div v-else>
@@ -31,15 +299,17 @@
             <div class="question">
                 Rules
                 <br>
-                Answer each prompt as best as possible before time runs out! Afterwards, everyone will vote for their favorite answer.
+                <br>
+                Answer each prompt as best as possible before time 
+                runs out! Afterwards, everyone will vote for their favorite answer.
             </div>
         </div>
-
         <div class="progress-bar">
             <div class="progress" id="progress"></div>
         </div>
 
- </div>
+
+    </div>
 </template>
 
 
@@ -174,51 +444,3 @@
     }
 </script>
 
-<style>
-    .question {
-    font-family: "Krungthep";
-    font-size: 40px;
-    text-align: center;
-    padding-bottom: 2%;
-    color: white;
-}
-
-    hr {
-        border: 2px solid white;
-    }
-
-    .btnPin {
-        width: 10%;
-        font-size: 20px;
-        text-align: center;
-        font-family: "Krungthep";
-        background-color: #F5A623;
-        color: black;
-        padding: 13px;
-        border: none;
-        border-radius: 4px;
-        display: flex;
-        justify-content: center;
-        margin: auto;
-        cursor: pointer;
-        
-    }
-
-    #response {
-        background-color: black;
-        color:white;
-        font-family: "Krungthep";
-        height: 50%;
-        margin-top:20%;
-
-    }
-    textarea::-webkit-input-placeholder {
-        color: white;
-        font-family: "Krungthep";
-    }
-
-
-
-
-
-</style>
