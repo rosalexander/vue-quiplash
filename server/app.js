@@ -401,6 +401,8 @@ io.on('connection', function(socket) {
 
         let prompt_ids_array = [...prompt_ids]
 
+        console.log(prompts_users)
+
         io.emit('get_prompts', {pin: pin, prompts: prompts, prompt_ids: prompt_ids_array, users_prompt: prompts_users})
     });
 
