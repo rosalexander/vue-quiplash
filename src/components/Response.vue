@@ -329,7 +329,7 @@
                 members: [],
                 prompts: this.$store.state.prompts,
                 prompt_ids: this.$store.state.prompt_ids,
-                users_prompt: this.$store.state.users_promptx,
+                // users_prompt: this.$store.state.users_prompts,
                 index: this.$store.state.answers.length,
                 answers: this.$store.state.answers,
                 response: '',
@@ -372,23 +372,24 @@
         mounted() {
             this.socket.on('get_prompts', function(data) {       
                 this.$store.commit('set_prompts', data)
-                for (let i = 0; i < data.prompts.length; i++) {
-                    if (data.users_prompt[i].includes(this.username)) {
-                        this.prompts.push(data.prompts[i])
-                        this.prompt_ids.push(data.prompt_ids[i])
-                        this.users_prompt.push(data.users_prompt[i])
-                    }
-                }
+                // for (let i = 0; i < data.prompts.length; i++) {
+
+                //     if (data.users_prompt[i].includes(this.username)) {
+                //         this.prompts.push(data.prompts[i])
+                //         this.prompt_ids.push(data.prompt_ids[i])
+                //         this.users_prompt.push(data.users_prompt[i])
+                //     }
+                // }
                 // if (this.admin) {
-                //     this.prompts = data.prompts;
-                //     this.prompt_ids = data.prompt_ids;
-                //     this.users_prompt = data.users_prompt;
+                this.prompts = data.prompts;
+                this.prompt_ids = data.prompt_ids;
+                // this.users_prompt = data.users_prompt;
                 // }
                 
                 console.log(data);
                 console.log("prompts", this.prompts)
                 console.log("prompts_ids", this.prompts_ids)
-                console.log("users_prompt", this.users_prompt)
+                // console.log("users_prompt", this.users_prompt)
                 this.$store.commit('clear_timer')
                 // this.progress()
             }.bind(this))

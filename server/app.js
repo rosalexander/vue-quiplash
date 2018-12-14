@@ -333,62 +333,66 @@ io.on('connection', function(socket) {
         let prompts_users = [];
         let user_list = await get_list_users_in_lobby(pin);
         
-        let temp_user_list = await get_list_users_in_lobby(pin);
+        // let temp_user_list = await get_list_users_in_lobby(pin);
 
-        console.log(temp_user_list, "temp_user_list")
-        if (user_list.length <= 7) {
-            for (let i = 0; i < 4; i++) {
-                prompts_users.push(user_list)
-            }
-        } else if ((user_list.length > 8) && ((user_list.length <= 20))) {
-            while (temp_user_list.length) {
-                let temp_combination = []
-                for (let i = 0; i < 4; i++) {
-                    if (temp_user_list.length) {
-                        let user = temp_user_list.pop()
-                        temp_combination.push(user)
-                    }
-                }
-                console.log(temp_combination, "temp_combination")
-                prompts_users.push(temp_combination)
-            }
-        } else if ((user_list.length > 20) && ((user_list.length <= 30))) {
-            //divide by 5
-            while (temp_user_list.length) {
-                let temp_combination= []
-                for (let i = 0; i < 5; i++) {
-                    if (temp_user_list.length) {
-                        let user = temp_user_list.pop()
-                        temp_combination.push(user)
-                    }
-                }
-                prompts_users.push(temp_combination)
-            }
-        } else if ((user_list.length > 30) && ((user_list.length <= 48))) {
-            //divide by 6
-            while (temp_user_list.length) {
-                let temp_combination = []
-                for (let i = 0; i < 6; i++) {
-                    if (temp_user_list.length) {
-                        let user = temp_user_list.pop()
-                        temp_combination.push(user)
-                    }
-                }
-                prompts_users.push(temp_combination)
-            }
-        } else {
-            //divide by 10
-            while (temp_user_list.length) {
-                let temp_combination = []
-                for (let i = 0; i < 10; i++) {
-                    if (temp_user_list.length) {
-                        let user = temp_user_list.pop()
-                        temp_combination.push(user)
-                    }
-                }
-                prompts_users.push(temp_combination)
-            }
-        }
+        // console.log(temp_user_list, "temp_user_list")
+
+        // if (user_list.length) {
+        //     for (let i = 0; i < 4; i++) {
+        //         prompts_users.push(user_list)
+        //     }
+            
+        // } 
+        
+        // else if ((user_list.length > 8) && ((user_list.length <= 20))) {
+        //     while (temp_user_list.length) {
+        //         let temp_combination = []
+        //         for (let i = 0; i < 4; i++) {
+        //             if (temp_user_list.length) {
+        //                 let user = temp_user_list.pop()
+        //                 temp_combination.push(user)
+        //             }
+        //         }
+        //         console.log(temp_combination, "temp_combination")
+        //         prompts_users.push(temp_combination)
+        //     }
+        // } else if ((user_list.length > 20) && ((user_list.length <= 30))) {
+        //     //divide by 5
+        //     while (temp_user_list.length) {
+        //         let temp_combination= []
+        //         for (let i = 0; i < 5; i++) {
+        //             if (temp_user_list.length) {
+        //                 let user = temp_user_list.pop()
+        //                 temp_combination.push(user)
+        //             }
+        //         }
+        //         prompts_users.push(temp_combination)
+        //     }
+        // } else if ((user_list.length > 30) && ((user_list.length <= 48))) {
+        //     //divide by 6
+        //     while (temp_user_list.length) {
+        //         let temp_combination = []
+        //         for (let i = 0; i < 6; i++) {
+        //             if (temp_user_list.length) {
+        //                 let user = temp_user_list.pop()
+        //                 temp_combination.push(user)
+        //             }
+        //         }
+        //         prompts_users.push(temp_combination)
+        //     }
+        // } else {
+        //     //divide by 10
+        //     while (temp_user_list.length) {
+        //         let temp_combination = []
+        //         for (let i = 0; i < 10; i++) {
+        //             if (temp_user_list.length) {
+        //                 let user = temp_user_list.pop()
+        //                 temp_combination.push(user)
+        //             }
+        //         }
+        //         prompts_users.push(temp_combination)
+        //     }
+        // }
         let admin_index = user_list.indexOf("Admin");
         let user_prompt = [];
         if (admin_index > -1) {
@@ -399,7 +403,7 @@ io.on('connection', function(socket) {
 
         do {
             prompt_ids.add(Math.floor(Math.random() * prompt_data.length));
-        } while (prompt_ids.size < prompts_users.length)
+        } while (prompt_ids.size < 4)
 
         prompt_ids.forEach((id) => {
             redis.lpush('prompts_' + pin, id)
@@ -408,9 +412,9 @@ io.on('connection', function(socket) {
 
         let prompt_ids_array = [...prompt_ids]
 
-        console.log(prompts_users, "prompts_users")
+        // console.log(prompts_users, "prompts_users")
 
-        io.emit('get_prompts', {pin: pin, prompts: prompts, prompt_ids: prompt_ids_array, users_prompt: prompts_users})
+        io.emit('get_prompts', {pin: pin, prompts: prompts, prompt_ids: prompt_ids_array})
     });
 
     socket.on('set_prompt', function(data) {
