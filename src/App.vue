@@ -252,8 +252,4 @@ input[type=submit]:hover {
     padding: 5px;
 }
 
-  
-  
-
-
 </style>

@@ -90,6 +90,17 @@ async function get_prompt(pin, prompt_id) {
     return prompt;
 };
 
+/** UNUSED
+ * Mutates the Set 'ref' to hold all unique combinations of 'arr' choose 'k'. Should be only called by function 'get_combinations'.
+ *
+ * 
+ * @param {Array} arr - the array 
+ * @param {int} index 
+ * @param {int} i 
+ * @param {Array} pair 
+ * @param {int} k 
+ * @param {Set} ref 
+ */
 function get_combinations_helper(arr, index, i, pair, k, ref) {
     if (k > arr.length) {
         return;
@@ -108,7 +119,14 @@ function get_combinations_helper(arr, index, i, pair, k, ref) {
     get_combinations_helper(arr, index+1, i+1, pair, k, ref);
     get_combinations_helper(arr, index, i+1, pair, k, ref);
 }
-  
+
+/** UNUSED
+ * Returns a set containing all combinations of size 'k' from the items in arrahy 'arr'.
+ * 
+ * @param {Array} arr 
+ * @param {int} k 
+ * @returns {Set} combinations
+ */
 function get_combinations(arr, k) {
     var combinations = new Set()
     var test = 'hello'
@@ -154,8 +172,8 @@ io.on('connection', function(socket) {
         });
     });
 
-    /**
-     * Emits 'list_users_in_lobby' when called. Unused
+    /** UNUSED
+     * Emits 'list_users_in_lobby' when called.
      * 
      * @emits 'list_users_in_lobby'
      */
@@ -251,8 +269,9 @@ io.on('connection', function(socket) {
         })
     });
 
-    /** DEPRECRATED FUNCTION
+    /** DEPRECATED FUNCTION
      * Removes user from a lobby.
+     * 
      */
     socket.on('remove_user_from_lobby', function(data) {
         console.log("Removing user " + data.username + " from lobby " + data.pin);
@@ -316,7 +335,11 @@ io.on('connection', function(socket) {
     });
 
     /**
-     * Start game
+     * Sets up the starting game phase by resetting the 'prompts_{pin}' list and 'response_{pin}' list and emitting the 'get_start_game' event to clients in Lobby.vue
+     * Called in Lobby.vue
+     * 
+     * @param {String} data.pin
+     * @emits 'get_start_game' to Lobby.vue
      */
 
     socket.on('set_start_game', function(data) {
@@ -327,12 +350,18 @@ io.on('connection', function(socket) {
         io.emit('get_start_game', {pin: data.pin});
     });
 
+    /**
+     * Sends a randomized list of prompts to clients in Response.vue, and adds the prompt IDs to the list 'prompts_{pin}'.
+     * @params {String} pin
+     * @emits 'get_prompts' to Response.vue
+     */
     socket.on('set_prompts', async function (pin) {
         let prompts = [];
         let prompt_ids = new Set();
         let prompts_users = [];
         let user_list = await get_list_users_in_lobby(pin);
         
+        // LOGIC TO DISTRIBUTE PROMPTS TO CLIENTS - NOT WORKING
         // let temp_user_list = await get_list_users_in_lobby(pin);
 
         // console.log(temp_user_list, "temp_user_list")
@@ -417,6 +446,13 @@ io.on('connection', function(socket) {
         io.emit('get_prompts', {pin: pin, prompts: prompts, prompt_ids: prompt_ids_array})
     });
 
+    /** UNUSED EVENT
+     * Returns an object containing the corresponding prompt when given a prompt ID
+     * 
+     * @param {data.prompt_id}
+     * @param {data.pin}
+     * @emits 'get_prompt'
+     */
     socket.on('set_prompt', function(data) {
         let prompt = get_prompt(data.pin, parseInt(data.prompt_id))
         io.emit('get_prompt', {pin: data.pin, prompt: prompt, prompt_id: data.prompt_id})
@@ -435,7 +471,7 @@ io.on('connection', function(socket) {
     });
 
     /**
-     * Submit the answer
+     * Submit the answer to a prompt.
      * 
      * @params {Object} data
      * @param {string} data.prompt_id
@@ -448,6 +484,12 @@ io.on('connection', function(socket) {
         redis.zadd('response_' + data.pin, 1, JSON.stringify(data)).catch((err) => {console.log(err)})
     }),
 
+    /**
+     * Returns all the responses to the set prompts in 'response_{pin}' to the clients in Results.vue
+     * 
+     * @param {string} pin
+     * @emits 'get_responses' to Results.vue
+     */
     socket.on('set_responses', function(pin) {
         redis.zrange('response_' + pin, 0, -1).then(function(result) {
             return result.map(function(x) {
@@ -458,11 +500,23 @@ io.on('connection', function(socket) {
         }).catch((err) => {console.log(err)});
     }),
 
+    /**
+     * Increases the score of a response by 1 for the voting phase of the game.
+     * 
+     * @param {Object} response - the response object
+     * @param {string} response.pin
+     */
     socket.on('submit_vote', function(response) {
         redis.zincrby('response_' + response.pin, 1, JSON.stringify(response)).catch((err) => {console.log(err)});
 
     }),
 
+    /**
+     * Returns an object containing the scores of the responses and a list containing the username of the top scorers to clients in Results.vue
+     * 
+     * @param {Object} response
+     * @emits 'get_scores' to Results.vue
+     */
     socket.on('set_scores', function(data) {
         
         let get_scores = new Promise((resolve, reject) => {
