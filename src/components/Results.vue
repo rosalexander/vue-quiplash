@@ -82,6 +82,10 @@
     .cardRow {
         width: 100%;
         background-color: #96C4F9;
+        position: relative;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
 
     }
 
@@ -446,8 +450,6 @@
     <div class="question">
             {{prompts[index]}}
     </div>
-
-    <hr>
 
     <div class="cardRow">
 
