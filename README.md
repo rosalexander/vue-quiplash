@@ -1,6 +1,15 @@
-# kahoot-clone
+## Screenshots
+#### Homepage
+![Homepage](screenshots/homepage.png)
+#### Lobby
+![Lobby](screenshots/lobby.png)
+#### Answer Round
+![Answer Round](screenshots/answer_round.png)
+#### Voting Round
+![Voting Round](screenshots/voting_round.png)
+#### Winner Results
+![Winner Results](screenshots/winner_result.png)
 
-> A kahoot clone using vue.js
 
 ## Build Setup
 
@@ -19,6 +28,3 @@ cd server
 node app.js
 
 ```
-
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
-# kahoot-clone
