@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "ioredis": "^4.2.0",
-    "socket.io": "^2.1.1",
+    "socket.io": "^2.5.0",
     "socket.io-client": "^2.1.1",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
